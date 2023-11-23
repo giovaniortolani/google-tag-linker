@@ -1,71 +1,82 @@
-const googleTagLinker = function(action = "get", settings = {}) {    
+import { getLinker, readLinker, decorateWithLinker } from "./actions.js";
+
+/**
+ * Main function to create and return the linker parameter for Google Tag cross-domain tracking.
+ *
+ * @function
+ *
+ * @param {string|undefined} action - The action for the function to execute. Available options: "get", "read", "decorate". Default: "get".
+ * @param {string|undefined} settings.gaCookiesPrefix - the prefix to use when looking for _ga cookies. Default: "".
+ * @param {string|undefined} settings.conversionLinkerCookiesPrefix - the prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies. Default: "_gcl".
+ * @param {string|undefined} settings.linkerQueryParameterName - the query parameter name to use as the linker parameter. Default: "_gl".
+ * @param {boolean|undefined} settings.checkFingerPrint - enable or disable checking the fingerprint of the linker parameter. Default: false.
+ * @param {HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated.
+ * @param {boolean|undefined} settings.useFragment - whether to place the linker parameter in the fragment part of the URL or in the query string. Default: false.
+ * @param {(string|RegExp)[]|object|undefined} settings.cookiesNamesList - list of cookies names to include in the linker parameter or an object containing the cookies names and values. Default: ["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha"].
+ * @returns {HTMLAnchorElement|HTMLFormElement|string|undefined} Returns the linker parameter, the values read from the linker parameter, the entities decorated with the linker parameter or undefined.
+ */
+const googleTagLinker = function (action = "get", settings = {}) {
     // Check if we are on a browser
-    if(typeof window === "undefined" || typeof window.document === "undefined"){
-        throw 'This should be only run on a browser'
+    if (typeof window === "undefined" || typeof window.document === "undefined") {
+        throw "This should be only run on a browser";
     }
-    // Grab current GA4 Related cookies
-    const cookies = getCookies();    
-    if(action === 'get'){
-        return ["1", getFingerPrint(cookies), cookies.join('*')].join('*');
-    }        
+
+    const defaultSettings = {
+        gaCookiesPrefix: settings.gaCookiesPrefix || "",
+        conversionLinkerCookiesPrefix: settings.conversionLinkerCookiesPrefix || "_gcl",
+        linkerQueryParameterName: settings.linkerQueryParameterName || "_gl",
+        checkFingerPrint: !!settings.checkFingerPrint || false,
+        useFragment: !!settings.useFragment || false
+    };
+
+    if (settings.cookiesNamesList) {
+        defaultSettings.cookiesNamesList = settings.cookiesNamesList;
+    } else {
+        defaultSettings.cookiesNamesList = [
+            // Main Google Analytics Cookie
+            defaultSettings.gaCookiesPrefix + "_ga",
+
+            // Google Analytics 4 Session Cookie (e.g. Data Stream ID is G-ABC123, the cookie will be <prefix>_ga_ABC123)
+            new RegExp("^" + defaultSettings.gaCookiesPrefix + "_ga_[A-Z,0-9]"),
+
+            // First Party Linker Cookie maps to sGTM
+            "FPLC"
+        ];
+
+        // Google Ads (gclid, gclsrc maps to _aw, _dc, _gf, _ha cookies)
+        // Campaign Manager (dclid, gclsrc maps to _aw, _dc, _gf, _ha cookies)
+        // wbraid (wbraid maps to _gb cookie)
+        ["_aw", "_dc", "_gb", "_gf", "_ha"].forEach((name) => {
+            defaultSettings.cookiesNamesList.push(
+                defaultSettings.conversionLinkerCookiesPrefix + name
+            );
+        });
+    }
+
+    switch (action) {
+        case "get":
+            return getLinker({
+                cookiesNamesList: defaultSettings.cookiesNamesList,
+                gaCookiesPrefix: defaultSettings.gaCookiesPrefix
+            });
+        case "read":
+            return readLinker({
+                linkerQueryParameterName: defaultSettings.linkerQueryParameterName,
+                checkFingerPrint: defaultSettings.checkFingerPrint
+            });
+        case "decorate":
+            return decorateWithLinker({
+                linkerQueryParameterName: defaultSettings.linkerQueryParameterName,
+                cookiesNamesList: defaultSettings.cookiesNamesList,
+                entity: settings.entity,
+                useFragment: defaultSettings.useFragment
+            });
+        default:
+            break;
+    }
 };
 
 googleTagLinker.prototype = {};
 googleTagLinker.answer = 42;
 
-function getCookies() {
-    const cookies = [];
-    const cookiesList = [
-        /^_ga$/,          // Main Google Analytics Cookie
-        /^_ga_[A-Z,0-9]/, // Google Analytics 4 Session Cookie
-        /^FPLC$/          // First Party Linker Cookie > sGTM
-    ];
-    let _FPLC = undefined;
-    ('; ' + document.cookie).split('; ').forEach(function(ck) {
-        let name = ck.split("=")[0];
-        let value = ck.split("=")[1];
-        cookiesList.forEach(regex => {
-            if (regex.test(name)) {
-                // This needs to go at the end
-                if(name === "FPLC") {
-                    _FPLC = ["_fplc", btoa(value).replace(/=/g, '.')].join('*');
-                } else {
-                    if(name.match(/^_ga/)) {
-                        value = value.match(/G[A-Z]1\.[0-9]\.(.+)/)[1]
-                        console.log(name, value)
-
-                        cookies.push([name, btoa(value).replace(/=/g, '.')].join('*'))
-                    }                    
-                }                               
-            }
-        })
-    });
-    if(_FPLC) cookies.push(_FPLC)
-    return cookies;
-}
-
-function getFingerPrint(cookies = "") {
-
-    // Build Finger Print String
-    const fingerPrintString = [window.navigator.userAgent, (new Date).getTimezoneOffset(), window.navigator.userLanguage || window.navigator.language, Math.floor((new Date).getTime() / 60 / 1E3) - 0, cookies ? cookies.join('*') : ""].join("*");
-
-    // make a CRC Table
-    let c;
-    const crcTable = [];
-    for (var n = 0; n < 256; n++) {
-        c = n;
-        for (var k = 0; k < 8; k++) {
-            c = ((c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1));
-        }
-        crcTable[n] = c;
-    }
-    // Create a CRC32 Hash
-    let crc = 0 ^ (-1);
-    for (let i = 0; i < fingerPrintString.length; i++) {
-        crc = (crc >>> 8) ^ crcTable[(crc ^ fingerPrintString.charCodeAt(i)) & 0xFF];
-    }
-    // Convert the CRC32 Hash to Base36 and return the value    
-    crc = ((crc ^ (-1)) >>> 0).toString(36);
-    return crc;
-}
-export default googleTagLinker
+export default googleTagLinker;

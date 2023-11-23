@@ -59,7 +59,7 @@ function getQueryParameterValue(parameterName) {
  * @param {boolean} settings.checkFingerPrint - if the function should check for the fingerprint validation before returning the cookies
  * @returns {object|undefined} - an object with the cookies values, or undefined if the linker parameter is not found or the fingerprint check failed
  */
-function getLinkerValuesFromUrl({ linkerQueryParameterName, checkFingerPrint } = {}) {
+export function getLinkerValuesFromUrl({ linkerQueryParameterName, checkFingerPrint } = {}) {
     const linkerParameterValue = getQueryParameterValue(linkerQueryParameterName);
     if (!linkerParameterValue) return;
 
@@ -89,7 +89,7 @@ function getLinkerValuesFromUrl({ linkerQueryParameterName, checkFingerPrint } =
  * @param {string} settings.gaCookiesPrefix - prefix for the Google Analytics cookies
  * @returns {string[]} - an array containing the linker value for each cookie. Example: ['_ga_THYNGSTER*XXXXXXXXXXXXXXX', '_gcl_aw*AAAAAAAAAAAA', '_gcl_dc*BBBBBBBBBBB', '_gcl_gb*CCCCCCCCCCCC', '_gcl_gf*DDDDDDDDDDD', '_gcl_ha*EEEEEEEEEEEE', '_fplc*MTExMTExMTExMTExMTExMTExMTEx']
  */
-function generateLinkerValuesFromCookies({ cookiesNamesList, gaCookiesPrefix } = {}) {
+export function generateLinkerValuesFromCookies({ cookiesNamesList, gaCookiesPrefix } = {}) {
     const gaCookiesRegex = new RegExp("^" + gaCookiesPrefix + "_ga");
     const cookiesValuesFormattedForLinker = [];
     let _FPLC = undefined;
@@ -142,7 +142,7 @@ function generateLinkerValuesFromCookies({ cookiesNamesList, gaCookiesPrefix } =
  * @param {HTMLAnchorElement} anchorTag - the anchor tag to be decorated
  * @param {boolean} useFragment - whether to place the linker parameter in the fragment part of the URL or in the query string
  */
-function decorateAnchorTagWithLinker(
+export function decorateAnchorTagWithLinker(
     linkerQueryParameter,
     linkerParameter,
     anchorElement,
@@ -169,7 +169,7 @@ function decorateAnchorTagWithLinker(
  * @param {string} linkerParameter - the linker parameter value
  * @param {HTMLFormElement} form - the <form> HTML element to decorate
  */
-function decorateFormTagWithLinker(linkerQueryParameter, linkerParameter, formElement) {
+export function decorateFormTagWithLinker(linkerQueryParameter, linkerParameter, formElement) {
     if (formElement && formElement.action) {
         const method = (formElement.method || "").toLowerCase();
         if ("get" === method) {
@@ -200,7 +200,8 @@ function decorateFormTagWithLinker(linkerQueryParameter, linkerParameter, formEl
             if (urlChecker.test(decoratedUrl)) {
                 formElement.action = decoratedUrl;
                 return formElement;
-            }        }
+            };
+        }
     }
 }
 
@@ -213,7 +214,7 @@ function decorateFormTagWithLinker(linkerQueryParameter, linkerParameter, formEl
  * @param {boolean} useFragment - whether to place the linker parameter in the fragment part of the URL or in the query string
  * @returns {string} - the decorated URL
  */
-function decorateURLWithLinker(linkerQueryParameter, linkerParameter, url, useFragment) {
+export function decorateURLWithLinker(linkerQueryParameter, linkerParameter, url, useFragment) {
     function Q(a) {
         return new RegExp("(.*?)(^|&)" + a + "=([^&]*)&?(.*)");
     }
@@ -242,8 +243,8 @@ function decorateURLWithLinker(linkerQueryParameter, linkerParameter, url, useFr
     let queryString = urlParsedIntoParts[2] || "";
     let fragment = urlParsedIntoParts[3] || "";
     const linkerParameterKeyValueQuery = linkerQueryParameter + "=" + linkerParameter;
-    if (useFragment) fragment = "#" + e(fragment.substring(1));
-    else queryString = "?" + e(queryString.substring(1));
+    if (useFragment) fragment = "#" + e(fragment.substring(1), linkerParameterKeyValueQuery);
+    else queryString = "?" + e(queryString.substring(1), linkerParameterKeyValueQuery);
     return "" + hostname + queryString + fragment;
 }
 
@@ -252,7 +253,7 @@ function decorateURLWithLinker(linkerQueryParameter, linkerParameter, url, useFr
  * @param {string[]} linkerCookiesValues - list of values to calculate the fingerprint from. It's an array in the following format ['<cookie name 1>*<cookie value Base-64 transformed 1>', ...]
  * @returns {string} - the calculated fingerprint
  */
-function getFingerPrint(linkerCookiesValues = undefined) {
+export function getFingerPrint(linkerCookiesValues = undefined) {
     // Build Finger Print String
     const fingerPrintString = [
         window.navigator.userAgent,
@@ -281,158 +282,3 @@ function getFingerPrint(linkerCookiesValues = undefined) {
     crc = ((crc ^ -1) >>> 0).toString(36);
     return crc;
 }
-
-/**
- * @function getLinker
- * @param {object} [settings={}] - the settings object
- * @param {(string|RegExp)[]|object} settings.cookiesNamesList - an array with the cookies names to be passed on the linker, or an object with the cookies names and values
- * @param {string} settings.gaCookiesPrefix - prefix for the Google Analytics cookies
- * @returns {string} - the linker parameter. Example: 1*dm649n*_ga*MTM2MDM4NDg1MS4xNjYxODIxMjQy*_ga_THYNGSTER*XXXXXXXXXXXXXXX*_gcl_aw*AAAAAAAAAAAA*_gcl_dc*BBBBBBBBBBB*_gcl_gb*CCCCCCCCCCCC*_gcl_gf*DDDDDDDDDDD*_gcl_ha*EEEEEEEEEEEE*_fplc*MTExMTExMTExMTExMTExMTExMTEx
- */
-function getLinker({ cookiesNamesList, gaCookiesPrefix } = {}) {
-    const linkerCookiesValues = generateLinkerValuesFromCookies({
-        cookiesNamesList,
-        gaCookiesPrefix
-    });
-
-    return ["1", getFingerPrint(linkerCookiesValues), linkerCookiesValues.join("*")].join("*");
-}
-
-/**
- * @function readLinker
- * @param {object} [settings={}] - the settings object
- * @param {string} settings.linkerQueryParameterName - the parameter name of the linker in the URL
- * @param {boolean} settings.checkFingerPrint - if the function should check for the fingerprint validation before returning the cookies
- * @returns {object|undefined} - an object with the cookies values, or undefined if the linker parameter is not found or the fingerprint check failed
- */
-function readLinker({ linkerQueryParameterName, checkFingerPrint } = {}) {
-    return getLinkerValuesFromUrl({
-        linkerQueryParameterName,
-        checkFingerPrint
-    });
-}
-
-/**
- * @function decorateWithLinker
- * @param {object} [settings={}] - the settings object
- * @param {string} settings.linkerQueryParameterName - the parameter name of the linker in the URL
- * @param {(string|RegExp)[]|object} settings.cookiesNamesList - an array with the cookies names to be passed on the linker, or an object with the cookies names and values
- * @param {string} settings.gaCookiesPrefix - prefix for the Google Analytics cookies
- * @param {HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated
- * @param {boolean} settings.useFragment - whether to place the linker parameter in the fragment part of the URL or in the query string
- * @returns {HTMLAnchorElement|HTMLFormElement|string} - the entity (<a>, <form> or an URL) decorated with the linker parameter
-*/
-function decorateWithLinker({
-    linkerQueryParameterName,
-    cookiesNamesList,
-    gaCookiesPrefix,
-    entity,
-    useFragment
-} = {}) {
-    const linkerParameter = getLinker({
-        cookiesNamesList,
-        gaCookiesPrefix
-    });
-
-    if (entity.tagName) {
-        if ("A" === entity.tagName) {
-            return decorateAnchorTagWithLinker(
-                linkerQueryParameterName,
-                linkerParameter,
-                entity,
-                useFragment
-            );
-        }
-        if ("FORM" === entity.tagName) {
-            return decorateFormTagWithLinker(linkerQueryParameterName, linkerParameter, entity);
-        }
-    }
-
-    if ("string" === typeof entity) {
-        return decorateURLWithLinker(
-            linkerQueryParameterName,
-            linkerParameter,
-            entity,
-            useFragment
-        );
-    }
-}
-
-/**
- * Main function to create and return the linker parameter for Google Tag cross-domain tracking.
- *
- * @function
- *
- * @param {string|undefined} action - The action for the function to execute. Available options: "get", "read", "decorate". Default: "get".
- * @param {string|undefined} settings.gaCookiesPrefix - the prefix to use when looking for _ga cookies. Default: "".
- * @param {string|undefined} settings.conversionLinkerCookiesPrefix - the prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies. Default: "_gcl".
- * @param {string|undefined} settings.linkerQueryParameterName - the query parameter name to use as the linker parameter. Default: "_gl".
- * @param {boolean|undefined} settings.checkFingerPrint - enable or disable checking the fingerprint of the linker parameter. Default: false.
- * @param {HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated.
- * @param {boolean|undefined} settings.useFragment - whether to place the linker parameter in the fragment part of the URL or in the query string. Default: false.
- * @param {(string|RegExp)[]|object|undefined} settings.cookiesNamesList - list of cookies names to include in the linker parameter or an object containing the cookies names and values. Default: ["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha"].
- * @returns {HTMLAnchorElement|HTMLFormElement|string|undefined} Returns the linker parameter, the values read from the linker parameter, the entities decorated with the linker parameter or undefined.
- */
-const googleTagLinker = function (action = "get", settings = {}) {
-    // Check if we are on a browser
-    if (typeof window === "undefined" || typeof window.document === "undefined") {
-        throw "This should be only run on a browser";
-    }
-
-    const defaultSettings = {
-        gaCookiesPrefix: settings.gaCookiesPrefix || "",
-        conversionLinkerCookiesPrefix: settings.conversionLinkerCookiesPrefix || "_gcl",
-        linkerQueryParameterName: settings.linkerQueryParameterName || "_gl",
-        checkFingerPrint: !!settings.checkFingerPrint || false,
-        useFragment: !!settings.useFragment || false
-    };
-
-    if (settings.cookiesNamesList) {
-        defaultSettings.cookiesNamesList = settings.cookiesNamesList;
-    } else {
-        defaultSettings.cookiesNamesList = [
-            // Main Google Analytics Cookie
-            defaultSettings.gaCookiesPrefix + "_ga",
-
-            // Google Analytics 4 Session Cookie (e.g. Data Stream ID is G-ABC123, the cookie will be <prefix>_ga_ABC123)
-            new RegExp("^" + defaultSettings.gaCookiesPrefix + "_ga_[A-Z,0-9]"),
-
-            // First Party Linker Cookie maps to sGTM
-            "FPLC"
-        ];
-
-        // Google Ads (gclid, gclsrc maps to _aw, _dc, _gf, _ha cookies)
-        // Campaign Manager (dclid, gclsrc maps to _aw, _dc, _gf, _ha cookies)
-        // wbraid (wbraid maps to _gb cookie)
-        ["_aw", "_dc", "_gb", "_gf", "_ha"].forEach((name) => {
-            defaultSettings.cookiesNamesList.push(
-                defaultSettings.conversionLinkerCookiesPrefix + name
-            );
-        });
-    }
-
-    switch (action) {
-        case "get":
-            return getLinker({
-                cookiesNamesList: defaultSettings.cookiesNamesList,
-                gaCookiesPrefix: defaultSettings.gaCookiesPrefix
-            });
-        case "read":
-            return readLinker({
-                linkerQueryParameterName: defaultSettings.linkerQueryParameterName,
-                checkFingerPrint: defaultSettings.checkFingerPrint
-            });
-        case "decorate":
-            return decorateWithLinker({
-                linkerQueryParameterName: defaultSettings.linkerQueryParameterName,
-                cookiesNamesList: defaultSettings.cookiesNamesList,
-                entity: settings.entity,
-                useFragment: defaultSettings.useFragment
-            });
-    }
-};
-
-googleTagLinker.prototype = {};
-googleTagLinker.answer = 42;
-
-export { googleTagLinker as default };
