@@ -1,5 +1,5 @@
 {
-  "name": "@giovaniortolani/google-tag-linker",
+  "name": "@giovaniortolanibarbosa/google-tag-linker",
   "version": "0.1.1",
   "description": "Generate a cross-domain linker parameter for Google Tags (ie: Google Analytics 4) and any other analytics tool",
   "main": "dist/googleTagLinker.min.js",
