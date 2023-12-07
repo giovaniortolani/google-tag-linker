@@ -1,6 +1,6 @@
 # Table of contents
 
-- [Google Tag Linker Brigde](#google-tag-linker-brigde)
+- [Google Tag Linker Brigde](#google-tag-linker-brigde-and-any-other-analyticsmarketing-tools)
 - [How does Google Tag cross-domain work](#how-does-google-tag-cross-domain-work)
 - [Notes](#notes)
 - [To-Do](#to-do)
@@ -18,9 +18,10 @@
     + [Example](#example-2)
 
 
-# Google Tag Linker Brigde
+# Google Tag Linker Brigde (and any other analytics/marketing tools)
 
-Hola! Olá! This is a **JavaScript** library that provided the needed functionality for creating a `linkerParam` for Google Analytics 4 (**_`Google Tag`_** , **_`GTAG`_**). I started this work back in 2019 when I first saw the new `_gl` parameter.
+Hola! Olá! This is a **JavaScript** library that provided the needed functionality for creating a `linkerParam` for Google Analytics 4 (**_`Google Tag`_**, **_`GTAG`_**). I
+It also works for any other analytics/marketing tools.
 
 At the time of publishing this library Google doesn't offer any "documented" way of generating this value, making really hard to work with custom implementations, for example when needing to deal with iFrames or forms/links generated dynamically.
 
@@ -98,17 +99,17 @@ There are 3 options to run the script.
 ### Using `import`
 
 ```js
-import googleTagLinker from '@analytics-debugger/google-tag-linker';
-const linkerParam  = googleTagLinker("get");
+import googleTagLinker from '@giovaniortolanibarbosa/google-tag-linker';
+const linkerParam = googleTagLinker("get");
 ```
 
 ### Loading a bundle files of `dist` folder via CDN
 Choose your preferred version inside the `dist` folder.
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@analytics-debugger/google-tag-linker@latest/dist/googleTagLinker.iife.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@giovaniortolanibarbosa/google-tag-linker@latest/dist/googleTagLinker.iife.min.js"></script>
 <script>
-    const linkerParam  = googleTagLinker("get");
+    const linkerParam = googleTagLinker("get");
 </script>
 ```
 
@@ -125,14 +126,17 @@ To do that, add this tag as a setup tag of your tool.
 -->
 
 <script>
-var googleTagLinker=function(){"use strict";var e=/^(?:(?:https?|mailto|ftp):|[^:/?#]*(?:[/?#]|$))/i;function r(e){for(var r=("; "+document.cookie).split("; "),i=r.length-1;i>=0;i--){var t=r[i].split("=");if(e instanceof RegExp?e.test(t[0]):e===t[0])return[t[0],t[1]]}return[]}function i(e,r){return[e,window.btoa(r).replace(/=/g,".")].join("*")}function t(e){return window.atob(e.replace(/\./g,"="))}function n(e){var r=window.location.href,i=new RegExp("[?&]"+e+"=([^&#]*)","i").exec(r);return null===i?null:decodeURIComponent(i[1])}function o(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},r=e.linkerQueryParameterName,i=e.checkFingerPrint,o=n(r);if(o){for(var a=o.split("*").slice(2),s={},u=[],c=0;c<a.length;c+=2){var g=a[c],m=a[c+1];u.push(g+"*"+m),s[g]=t(m)}if(i){var k=f(u),v=o.split("*")[1];if(v!==k)return}return s}}function a(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},t=e.cookiesNamesList,n=e.gaCookiesPrefix,o=new RegExp("^"+n+"_ga"),a=[],s=void 0;return Array.isArray(t)?t.forEach((function(e){var t=r(e);e=t[0];var n=t[1];if(n){if(o.test(e))n=n.match(/G[A-Z]1\.[0-9]\.(.+)/)[1];else if("FPLC"===e)return void(s=n);a.push(i(e,n))}})):Object.keys(t).forEach((function(e){var r=t[e];"FPLC"!==e?a.push(i(e,r)):s=r})),s&&a.push(i("_fplc",s)),a}function s(r,i,t,n){if(t&&t.href){var o=c(r,i,t.href,n);if(e.test(o))return t.href=o,t}}function u(r,i,t){if(t&&t.action){var n=(t.method||"").toLowerCase();if("get"===n){for(var o=t.childNodes||[],a=!1,s=0;s<o.length;s++){var u=o[s];if(u.name===r){u.setAttribute("value",i),a=!0;break}}if(!a){var f=document.createElement("input");f.setAttribute("type","hidden"),f.setAttribute("name",r),f.setAttribute("value",i),t.appendChild(f)}return t}if("post"===n){var g=c(r,i,t.action);if(e.test(g))return t.action=g,t}}}function c(e,r,i,t){function n(r){var i=(r=function(e,r){if(e=function(e){return new RegExp("(.*?)(^|&)"+e+"=([^&]*)&?(.*)")}(e).exec(r)){var i=e[2],t=e[4];r=e[1],t&&(r=r+i+t)}return r}(e,r)).charAt(r.length-1);return r&&"&"!==i&&(r+="&"),r+c}t=!!t;var o=/([^?#]+)(\?[^#]*)?(#.*)?/.exec(i);if(!o)return"";var a=o[1],s=o[2]||"",u=o[3]||"",c=e+"="+r;return t?u="#"+n(u.substring(1)):s="?"+n(s.substring(1)),""+a+s+u}function f(){for(var e,r=arguments.length>0&&void 0!==arguments[0]?arguments[0]:void 0,i=[window.navigator.userAgent,(new Date).getTimezoneOffset(),window.navigator.userLanguage||window.navigator.language,Math.floor((new Date).getTime()/60/1e3)-0,r?r.join("*"):""].join("*"),t=[],n=0;n<256;n++){e=n;for(var o=0;o<8;o++)e=1&e?3988292384^e>>>1:e>>>1;t[n]=e}for(var a=-1,s=0;s<i.length;s++)a=a>>>8^t[255&(a^i.charCodeAt(s))];return((-1^a)>>>0).toString(36)}function g(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},r=e.cookiesNamesList,i=e.gaCookiesPrefix,t=a({cookiesNamesList:r,gaCookiesPrefix:i});return["1",f(t),t.join("*")].join("*")}function m(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},r=e.linkerQueryParameterName,i=e.checkFingerPrint;return o({linkerQueryParameterName:r,checkFingerPrint:i})}function k(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},r=e.linkerQueryParameterName,i=e.cookiesNamesList,t=e.gaCookiesPrefix,n=e.entity,o=e.useFragment,a=g({cookiesNamesList:i,gaCookiesPrefix:t});if(n.tagName){if("A"===n.tagName)return s(r,a,n,o);if("FORM"===n.tagName)return u(r,a,n)}if("string"==typeof n)return c(r,a,n,o)}var v=function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"get",r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};if("undefined"==typeof window||void 0===window.document)throw"This should be only run on a browser";var i={gaCookiesPrefix:r.gaCookiesPrefix||"",conversionLinkerCookiesPrefix:r.conversionLinkerCookiesPrefix||"_gcl",linkerQueryParameterName:r.linkerQueryParameterName||"_gl",checkFingerPrint:!!r.checkFingerPrint||!1,useFragment:!!r.useFragment||!1};switch(r.cookiesNamesList?i.cookiesNamesList=r.cookiesNamesList:(i.cookiesNamesList=[i.gaCookiesPrefix+"_ga",new RegExp("^"+i.gaCookiesPrefix+"_ga_[A-Z,0-9]"),"FPLC"],["_aw","_dc","_gb","_gf","_ha"].forEach((function(e){i.cookiesNamesList.push(i.conversionLinkerCookiesPrefix+e)}))),e){case"get":return g({cookiesNamesList:i.cookiesNamesList,gaCookiesPrefix:i.gaCookiesPrefix});case"read":return m({linkerQueryParameterName:i.linkerQueryParameterName,checkFingerPrint:i.checkFingerPrint});case"decorate":return k({linkerQueryParameterName:i.linkerQueryParameterName,cookiesNamesList:i.cookiesNamesList,entity:r.entity,useFragment:i.useFragment})}};return v.prototype={},v.answer=42,v}();
+var googleTagLinker=function(){"use strict";var e=/^(?:(?:https?|mailto|ftp):|[^:/?#]*(?:[/?#]|$))/i;function r(e,r){return[e,window.btoa(r).replace(/=/g,".")].join("*")}function i(e){return window.atob(e.replace(/\./g,"="))}function t(e,r,i,t){function n(r){var i=(r=function(e,r){if(e=function(e){return new RegExp("(.*?)(^|&)"+e+"=([^&]*)&?(.*)")}(e).exec(r)){var i=e[2],t=e[4];r=e[1],t&&(r=r+i+t)}return r}(e,r)).charAt(r.length-1);return r&&"&"!==i&&(r+="&"),r+c}t=!!t;var o=/([^?#]+)(\?[^#]*)?(#.*)?/.exec(i);if(!o)return"";var a=o[1],s=o[2]||"",u=o[3]||"",c=e+"="+r;return t?u="#"+n(u.substring(1)):s="?"+n(s.substring(1)),""+a+s+u}function n(){for(var e,r=arguments.length>0&&void 0!==arguments[0]?arguments[0]:void 0,i=[window.navigator.userAgent,(new Date).getTimezoneOffset(),window.navigator.userLanguage||window.navigator.language,Math.floor((new Date).getTime()/60/1e3)-0,r?r.join("*"):""].join("*"),t=[],n=0;n<256;n++){e=n;for(var o=0;o<8;o++)e=1&e?3988292384^e>>>1:e>>>1;t[n]=e}for(var a=-1,s=0;s<i.length;s++)a=a>>>8^t[255&(a^i.charCodeAt(s))];return((-1^a)>>>0).toString(36)}function o(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},i=function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},i=e.cookiesNamesList,t=e.gaCookiesPrefix,n=new RegExp("^"+t+"_ga"),o=[],a=void 0;return Array.isArray(i)?i.forEach((function(e){var i=function(e){for(var r=("; "+document.cookie).split("; "),i=r.length-1;i>=0;i--){var t=r[i].split("=");if(e instanceof RegExp?e.test(t[0]):e===t[0])return[t[0],t[1]]}return[]}(e);e=i[0];var t=i[1];if(t){if(n.test(e))t=t.match(/G[A-Z]1\.[0-9]\.(.+)/)[1];else if("FPLC"===e)return void(a=t);o.push(r(e,t))}})):Object.keys(i).forEach((function(e){var t=i[e];"FPLC"!==e?o.push(r(e,t)):a=t})),a&&o.push(r("_fplc",a)),o}({cookiesNamesList:e.cookiesNamesList,gaCookiesPrefix:e.gaCookiesPrefix});return["1",n(i),i.join("*")].join("*")}var a=function(){var r=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"get",a=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};if("undefined"==typeof window||void 0===window.document)throw"This should be only run on a browser";var s={gaCookiesPrefix:a.gaCookiesPrefix||"",conversionLinkerCookiesPrefix:a.conversionLinkerCookiesPrefix||"_gcl",linkerQueryParameterName:a.linkerQueryParameterName||"_gl",checkFingerPrint:!!a.checkFingerPrint||!1,useFragment:!!a.useFragment||!1};switch(a.cookiesNamesList?s.cookiesNamesList=a.cookiesNamesList:(s.cookiesNamesList=[s.gaCookiesPrefix+"_ga",new RegExp("^"+s.gaCookiesPrefix+"_ga_[A-Z,0-9]"),"FPLC"],["_aw","_dc","_gb","_gf","_ha"].forEach((function(e){s.cookiesNamesList.push(s.conversionLinkerCookiesPrefix+e)}))),r){case"get":return o({cookiesNamesList:s.cookiesNamesList,gaCookiesPrefix:s.gaCookiesPrefix});case"read":return function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};return function(){var e,r,t,o=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},a=o.linkerQueryParameterName,s=o.checkFingerPrint,u=(e=a,r=window.location.href,null===(t=new RegExp("[?&]"+e+"=([^&#]*)","i").exec(r))?null:decodeURIComponent(t[1]));if(u){for(var c=u.split("*").slice(2),f={},g=[],k=0;k<c.length;k+=2){var m=c[k],v=c[k+1];g.push(m+"*"+v),f[m]=i(v)}if(s){var l=n(g);if(u.split("*")[1]!==l)return}return f}}({linkerQueryParameterName:e.linkerQueryParameterName,checkFingerPrint:e.checkFingerPrint})}({linkerQueryParameterName:s.linkerQueryParameterName,checkFingerPrint:s.checkFingerPrint});case"decorate":return function(){var r=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},i=r.linkerQueryParameterName,n=r.cookiesNamesList,a=r.gaCookiesPrefix,s=r.entity,u=r.useFragment,c=o({cookiesNamesList:n,gaCookiesPrefix:a});if(s.tagName){if("A"===s.tagName)return function(r,i,n,o){if(n&&n.href){var a=t(r,i,n.href,o);if(e.test(a))return n.href=a,n}}(i,c,s,u);if("FORM"===s.tagName)return function(r,i,n){if(n&&n.action){var o=(n.method||"").toLowerCase();if("get"===o){for(var a=n.childNodes||[],s=!1,u=0;u<a.length;u++){var c=a[u];if(c.name===r){c.setAttribute("value",i),s=!0;break}}if(!s){var f=document.createElement("input");f.setAttribute("type","hidden"),f.setAttribute("name",r),f.setAttribute("value",i),n.appendChild(f)}return n}if("post"===o){var g=t(r,i,n.action);if(e.test(g))return n.action=g,n}}}(i,c,s)}if("string"==typeof s)return t(i,c,s,u)}({linkerQueryParameterName:s.linkerQueryParameterName,cookiesNamesList:s.cookiesNamesList,gaCookiesPrefix:s.gaCookiesPrefix,entity:a.entity,useFragment:s.useFragment})}};return a.prototype={},a.answer=42,a}();
 </script>
 ```
 
 
 ## `get` method
 
-The `get` method returns the linker.
+The `get` method returns the linker value.
+```js
+const linkerParam = googleTagLinker("get", settings);
+```
 
 | Argument name | Description | Type | Default |
 |---|---|---|---|
@@ -144,33 +148,26 @@ The `get` method returns the linker.
 
 Returns the linker using the default arguments.
 ```js
-// ...
 const linkerParam = googleTagLinker("get");
-// ...
 ```
 
 Returns the linker using `my_prefix` as GA4 cookies prefix and `another_prefix` as Conversion Linker cookies prefix.
 ```js
-// ...
 const linkerParam = googleTagLinker("get", {
     gaCookiesPrefix: 'my_prefix',
     conversionLinkerCookiesPrefix: 'another_prefix'
 });
-// ...
 ```
 
 Returns the linker just for the `_my_custom_client_id_cookie`, `my_custom_stream_session_cookie` and `/^_my_custom_[0-9]/` cookies.
 ```js
-// ...
 const linkerParam = googleTagLinker("get", {
     cookiesNamesList: ['_my_custom_client_id_cookie', 'my_custom_stream_session_cookie', /^_my_custom_[0-9]/]
 });
-// ...
 ```
 
 Returns the linker just for the `client_id`, `session_id` and `user_id` cookies and their values.
 ```js
-// ...
 const linkerParam = googleTagLinker("get", {
     cookiesNamesList: {
         client_id: '156eb98c-9fe9-4d5d-ae89-db4b3c29849d',
@@ -178,12 +175,14 @@ const linkerParam = googleTagLinker("get", {
         user_id: 'ABCDE123#@!'
     }
 });
-// ...
 ```
 
 ## `read` method
 
 The `read` method reads the linker parameter from URL and returns an object with it's values parsed and decoded.
+```js
+const linkerParamParsedAndDecoded = googleTagLinker("read", settings);
+```
 
 | Argument name | Description | Type | Default |
 |---|---|---|---|
@@ -195,36 +194,28 @@ The `read` method reads the linker parameter from URL and returns an object with
 
 Returns the linker from URL using the default arguments and returns an object with it's values parsed and decoded.
 ```js
-// ...
 const linkerParamParsedAndDecoded = googleTagLinker("read");
-// ...
 ```
 
 Reads the linker from URL `my_custom_linker_parameter` query parameter and returns an object with it's values parsed and decoded.
 ```js
-// ...
 const linkerParamParsedAndDecoded = googleTagLinker("read", { linkerQueryParameterName: 'my_custom_linker_parameter' });
-// ...
 ```
 
 Reads the linker from URL `my_custom_linker_parameter` query parameter and returns an object with it's values parsed and decoded, only if the fingerprint is valid.
 ```js
-// ...
 const linkerParamParsedAndDecoded = googleTagLinker("read", {
     linkerQueryParameterName: 'my_custom_linker_parameter',
     checkFingerPrint: true
 });
-// ...
 ```
 
 ## `decorate` method
 
 The `decorate` method decorates an entity with the linker value and returns the entity. Entities: URL string, `<form>` HTML element or `<a>` HTML element.
-
-Arguments:
-- The query parameter that will hold linker value.
-- The entity (URL string, `<form>` HTML element or `<a>` HTML element) to be decorated;
-
+```js
+const entityDecoratedWithLinkerValue = googleTagLinker("decorate", settings);
+```
 
 | Argument name | Description | Type | Default |
 |---|---|---|---|
@@ -239,53 +230,42 @@ Arguments:
 
 Returns the URL string decorated with linker parameter using default arguments.
 ```js
-// ...
 const entityDecoratedWithLinkerValue = googleTagLinker("decorate", { entity: 'https://example.com' });
-// ...
 ```
 
 Returns the URL string decorated with linker parameter using using `my_prefix` as GA4 cookies prefix and `another_prefix` as Conversion Linker cookies prefix.
 ```js
-// ...
 const entityDecoratedWithLinkerValue = googleTagLinker("decorate", {
     entity: 'https://example.com',
     gaCookiesPrefix: 'my_prefix',
     conversionLinkerCookiesPrefix: 'another_prefix'
 });
-// ...
 ```
 
 Returns the URL string decorated with linker parameter in the fragment part of the URL and using the `_mylinker` "query parameter".
 ```js
-// ...
 const entityDecoratedWithLinkerValue = googleTagLinker("decorate", {
     entity: 'https://example.com',
     useFragment: true,
     linkerQueryParameterName: '_mylinker'
 });
-// ...
 ```
 
 Returns the `<form>` HTML element decorated with linker parameter using default arguments.
 ```js
-// ...
 const entityDecoratedWithLinkerValue = googleTagLinker("decorate", { entity: someFormElement });
-// ...
 ```
 
 Returns the `<a>` HTML element decorated with linker just for the `_my_custom_client_id_cookie`, `my_custom_stream_session_cookie` and `/^_my_custom_[0-9]/` cookies.
 ```js
-// ...
 const entityDecoratedWithLinkerValue = googleTagLinker("decorate", {
     entity: someAnchorElement,
     cookiesNamesList: ['_my_custom_client_id_cookie', 'my_custom_stream_session_cookie', /^_my_custom_[0-9]/]
 });
-// ...
 ```
 
 Returns the `<a>` HTML element decorated with linker just for the `client_id`, `session_id` and `user_id` cookies and their values.
 ```js
-// ...
 const entityDecoratedWithLinkerValue = googleTagLinker("decorate", {
     entity: someAnchorElement,
     cookiesNamesList: {
@@ -294,5 +274,4 @@ const entityDecoratedWithLinkerValue = googleTagLinker("decorate", {
         user_id: 'ABCDE123#@!'
     }
 });
-// ...
 ```
