@@ -200,7 +200,7 @@ export function decorateFormTagWithLinker(linkerQueryParameter, linkerParameter,
             if (urlChecker.test(decoratedUrl)) {
                 formElement.action = decoratedUrl;
                 return formElement;
-            };
+            }
         }
     }
 }

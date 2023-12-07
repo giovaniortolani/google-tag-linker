@@ -1,7 +1,7 @@
 {
-  "name": "@analytics-debugger/google-tag-linker",
-  "version": "0.0.1",
-  "description": "Generate a cross-domain linker parameter for Google Tags ( ie: Google Analytics 4 )",
+  "name": "@giovaniortolani/google-tag-linker",
+  "version": "0.1.1",
+  "description": "Generate a cross-domain linker parameter for Google Tags (ie: Google Analytics 4) and any other analytics tool",
   "main": "dist/googleTagLinker.min.js",
   "module": "dist/dist/googleTagLinker.esm.min.js",
   "browser": "dist/googleTagLinker.min.js",
@@ -23,7 +23,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/analytics-debugger/google-tag-linker"
+    "url": "https://github.com/giovaniortolani/google-tag-linker"
   },
   "keywords": [
     "google",
@@ -36,15 +36,22 @@
     "analytics"
   ],
   "author": {
-    "name": "David Vallejo ",
+    "name": "David Vallejo",
     "email": "thyngster@gmail.com",
     "url": "https://www.thyngster.com"
   },
+  "contributors": [
+    {
+      "name": "Giovani Ortolani Barbosa",
+      "email": "giovaniortolanibarbosa@gmail.com",
+      "url": "https://www.linkedin.com/in/giovani-ortolani-barbosa/"
+    }
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/analytics-debugger/google-tag-linker/issues"
+    "url": "https://github.com/giovaniortolani/google-tag-linker/issues"
   },
-  "homepage": "https://www.thyngster.com",
+  "homepage": "https://github.com/giovaniortolani/google-tag-linker/",
   "funding": {
     "type": "individual",
     "url": "https://ko-fi.com/thyngster"

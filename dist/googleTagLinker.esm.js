@@ -200,7 +200,8 @@ function decorateFormTagWithLinker(linkerQueryParameter, linkerParameter, formEl
             if (urlChecker.test(decoratedUrl)) {
                 formElement.action = decoratedUrl;
                 return formElement;
-            }        }
+            }
+        }
     }
 }
 
@@ -321,7 +322,7 @@ function readLinker({ linkerQueryParameterName, checkFingerPrint } = {}) {
  * @param {HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated
  * @param {boolean} settings.useFragment - whether to place the linker parameter in the fragment part of the URL or in the query string
  * @returns {HTMLAnchorElement|HTMLFormElement|string} - the entity (<a>, <form> or an URL) decorated with the linker parameter
-*/
+ */
 function decorateWithLinker({
     linkerQueryParameterName,
     cookiesNamesList,
@@ -426,6 +427,7 @@ const googleTagLinker = function (action = "get", settings = {}) {
             return decorateWithLinker({
                 linkerQueryParameterName: defaultSettings.linkerQueryParameterName,
                 cookiesNamesList: defaultSettings.cookiesNamesList,
+                gaCookiesPrefix: defaultSettings.gaCookiesPrefix,
                 entity: settings.entity,
                 useFragment: defaultSettings.useFragment
             });

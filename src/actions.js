@@ -46,7 +46,7 @@ export function readLinker({ linkerQueryParameterName, checkFingerPrint } = {}) 
  * @param {HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated
  * @param {boolean} settings.useFragment - whether to place the linker parameter in the fragment part of the URL or in the query string
  * @returns {HTMLAnchorElement|HTMLFormElement|string} - the entity (<a>, <form> or an URL) decorated with the linker parameter
-*/
+ */
 export function decorateWithLinker({
     linkerQueryParameterName,
     cookiesNamesList,

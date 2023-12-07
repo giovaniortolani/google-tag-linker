@@ -1,8 +1,8 @@
 import babel from "rollup-plugin-babel";
 import { terser } from "rollup-plugin-terser";
 import resolve from "@rollup/plugin-node-resolve";
-const path = require('path');
-const license = require('rollup-plugin-license');
+const path = require("path");
+const license = require("rollup-plugin-license");
 
 const terserOptions = {
     compress: {
@@ -50,17 +50,19 @@ module.exports = [
         plugins: [
             license({
                 banner: `/*!
-* 
+*
 *   <%= pkg.name %> <%= pkg.version %>
 *   https://github.com/analytics-debugger/google-tag-linker
+*   https://github.com/giovaniortolani/google-tag-linker
 *
 *   Copyright (c) David Vallejo (https://www.thyngster.com).
+*   Copyright (c) Giovani Ortolani Barbosa (https://www.linkedin.com/in/giovani-ortolani-barbosa/).
 *   This source code is licensed under the MIT license found in the
 *   LICENSE file in the root directory of this source tree.
 *
 */
-`,
-            }),            
+`
+            }),
             resolve(),
             babel({
                 exclude: "node_modules/**"

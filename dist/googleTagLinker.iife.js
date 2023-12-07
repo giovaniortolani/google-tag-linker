@@ -1,9 +1,11 @@
 /*!
-* 
-*   @analytics-debugger/google-tag-linker 0.0.1
+*
+*   @giovaniortolani/google-tag-linker 0.1.1
 *   https://github.com/analytics-debugger/google-tag-linker
+*   https://github.com/giovaniortolani/google-tag-linker
 *
 *   Copyright (c) David Vallejo (https://www.thyngster.com).
+*   Copyright (c) Giovani Ortolani Barbosa (https://www.linkedin.com/in/giovani-ortolani-barbosa/).
 *   This source code is licensed under the MIT license found in the
 *   LICENSE file in the root directory of this source tree.
 *
@@ -311,7 +313,7 @@ var googleTagLinker = (function () {
      * @param {HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated
      * @param {boolean} settings.useFragment - whether to place the linker parameter in the fragment part of the URL or in the query string
      * @returns {HTMLAnchorElement|HTMLFormElement|string} - the entity (<a>, <form> or an URL) decorated with the linker parameter
-    */
+     */
     function decorateWithLinker() {
       var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         linkerQueryParameterName = _ref3.linkerQueryParameterName,
@@ -398,6 +400,7 @@ var googleTagLinker = (function () {
           return decorateWithLinker({
             linkerQueryParameterName: defaultSettings.linkerQueryParameterName,
             cookiesNamesList: defaultSettings.cookiesNamesList,
+            gaCookiesPrefix: defaultSettings.gaCookiesPrefix,
             entity: settings.entity,
             useFragment: defaultSettings.useFragment
           });

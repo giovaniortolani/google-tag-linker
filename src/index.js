@@ -68,6 +68,7 @@ const googleTagLinker = function (action = "get", settings = {}) {
             return decorateWithLinker({
                 linkerQueryParameterName: defaultSettings.linkerQueryParameterName,
                 cookiesNamesList: defaultSettings.cookiesNamesList,
+                gaCookiesPrefix: defaultSettings.gaCookiesPrefix,
                 entity: settings.entity,
                 useFragment: defaultSettings.useFragment
             });
