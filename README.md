@@ -23,9 +23,9 @@
 Hola! Olá! This is a **JavaScript** library that provided the needed functionality for creating a `linkerParam` for Google Analytics 4 (**_`Google Tag`_**, **_`GTAG`_**). I
 It also works for any other analytics/marketing tools.
 
-At the time of publishing this library Google doesn't offer any "documented" way of generating this value, making really hard to work with custom implementations, for example when needing to deal with iFrames or forms/links generated dynamically.
+At the time of publishing this library, Google doesn't offer any "documented" way of generating this value, making really hard to work with custom implementations, for example when needing to deal with iFrames or forms/links generated dynamically.
 
-The library is provided in the `AMD`, `UMD`, `IIFE` and `ESM` formats, all of them available in the `dist` folder.
+The library is provided in the `AMD`, `UMD`, `IIFE`, and `ESM` formats, all of them available in the `dist` folder.
 
 # How does Google Tag cross-domain work
 
@@ -42,7 +42,7 @@ The fingerprinting is done using the following values:
 - Current Time (current minute index from EPOC TimeStamp Rounded)
 - A list of cookies passed on the linker
 
-The usage for this fingerprinting is not identifying the user, but making the current link only to work on the current user browser and making it valid only for the current minute (since many users may share the same browser specs).
+The usage for this fingerprinting is not identifying the user, but making the current link only work on the current user's browser and making it valid only for the current minute (since many users may share the same browser specs).
 
 The Linker Parameter will look like this:
 
@@ -69,15 +69,15 @@ You can also specify a list of cookie names to be read or an object containing t
 
 # Notes
 
-This is a beta version, while it should work fine for doing a GA4 cross-domain tracking, some features needs to in a future, check next section.
+This is a beta version, while it should work fine for doing GA4 cross-domain tracking. Check the next section.
 
-When there are multiple GA4 session cookies, the code reads the last one present in `document.cookie` string, if it wasn't manually passed to the `googleTagLinker` function as argument.
+When there are multiple GA4 session cookies, the code reads the last one present in `document.cookie` string, if it wasn't manually passed to the `googleTagLinker` function as an argument.
 
 # To-Do
 
 - [x] Add Adwords / Double Click Support
 - [x] QA environments with multiple cookies
-- [x] Add the chance to manually defined the cookies to be passed
+- [x] Add the chance to manually define the cookies to be passed
 - [x] Add a "read" method to decode the linkerParam to the real cookie values
 - [x] Add a "decorate" method
 - [ ] Add tests
@@ -114,14 +114,14 @@ Choose your preferred version inside the `dist` folder.
 ```
 
 ### Self-hosting one of the bundle files of `dist` folder
-Keep in mind that **you will not receive updates**. This is a viable aproach if you use GTM.
+Keep in mind that **you will not receive updates**. This is a viable approach if you use GTM.
 If installing via GTM, choose the `googleTagLinker.iife.min.js` version.
 
 ```html
 <!--
-Inside a Custom HTML tag in GTM, add the your preferred minified version
+Inside a Custom HTML tag in GTM, add your preferred minified version
 
-Make sure that it fires before your product analytics or marketing analytics tool that will use the information appended in the query string (cross-domain).
+Ensure that it fires before your product analytics or marketing analytics tool that will use the information appended in the query string (cross-domain).
 To do that, add this tag as a setup tag of your tool.
 -->
 
@@ -142,7 +142,7 @@ const linkerParam = googleTagLinker("get", settings);
 |---|---|---|---|
 | settings.gaCookiesPrefix | Prefix to use when looking for `_ga` cookies. | string\|undefined  | `''` (empty string - i.e. no prefix) |
 | settings.conversionLinkerCookiesPrefix | Prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies. | string\|undefined | `_gcl` |
-| settings.cookiesNamesList | List of cookies names to include in the linker parameter or an object containing the cookies names and values | (string\|RegExp)[]\|object\|undefined | `["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha"]` |
+| settings.cookiesNamesList | List of cookies names to include in the linker parameter or an object containing the names and values of the cookies | (string\|RegExp)[]\|object\|undefined | `["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha"]` |
 
 ### Example
 
@@ -162,11 +162,15 @@ const linkerParam = googleTagLinker("get", {
 Returns the linker just for the `_my_custom_client_id_cookie`, `my_custom_stream_session_cookie` and `/^_my_custom_[0-9]/` cookies.
 ```js
 const linkerParam = googleTagLinker("get", {
-    cookiesNamesList: ['_my_custom_client_id_cookie', 'my_custom_stream_session_cookie', /^_my_custom_[0-9]/]
+    cookiesNamesList: [
+        '_my_custom_client_id_cookie',
+        'my_custom_stream_session_cookie',
+        /^_my_custom_[0-9]/
+    ]
 });
 ```
 
-Returns the linker just for the `client_id`, `session_id` and `user_id` cookies and their values.
+Returns the linker just for the `client_id`, `session_id`, and `user_id` cookies and their values.
 ```js
 const linkerParam = googleTagLinker("get", {
     cookiesNamesList: {
@@ -179,7 +183,7 @@ const linkerParam = googleTagLinker("get", {
 
 ## `read` method
 
-The `read` method reads the linker parameter from URL and returns an object with it's values parsed and decoded.
+The `read` method reads the linker parameter from the URL and returns an object with its values parsed and decoded.
 ```js
 const linkerParamParsedAndDecoded = googleTagLinker("read", settings);
 ```
@@ -192,17 +196,19 @@ const linkerParamParsedAndDecoded = googleTagLinker("read", settings);
 
 ### Example
 
-Returns the linker from URL using the default arguments and returns an object with it's values parsed and decoded.
+Returns the linker from the URL using the default arguments and returns an object with its values parsed and decoded.
 ```js
 const linkerParamParsedAndDecoded = googleTagLinker("read");
 ```
 
-Reads the linker from URL `my_custom_linker_parameter` query parameter and returns an object with it's values parsed and decoded.
+Reads the linker from URL `my_custom_linker_parameter` query parameter and returns an object with its values parsed and decoded.
 ```js
-const linkerParamParsedAndDecoded = googleTagLinker("read", { linkerQueryParameterName: 'my_custom_linker_parameter' });
+const linkerParamParsedAndDecoded = googleTagLinker("read", {
+    linkerQueryParameterName: 'my_custom_linker_parameter'
+});
 ```
 
-Reads the linker from URL `my_custom_linker_parameter` query parameter and returns an object with it's values parsed and decoded, only if the fingerprint is valid.
+Reads the linker from URL `my_custom_linker_parameter` query parameter and returns an object with its values parsed and decoded, only if the fingerprint is valid.
 ```js
 const linkerParamParsedAndDecoded = googleTagLinker("read", {
     linkerQueryParameterName: 'my_custom_linker_parameter',
@@ -212,7 +218,7 @@ const linkerParamParsedAndDecoded = googleTagLinker("read", {
 
 ## `decorate` method
 
-The `decorate` method decorates an entity with the linker value and returns the entity. Entities: URL string, `<form>` HTML element or `<a>` HTML element.
+The `decorate` method decorates an entity with the linker value and returns the entity. Entities: URL string, `<form>` HTML element, or `<a>` HTML element.
 ```js
 const entityDecoratedWithLinkerValue = googleTagLinker("decorate", settings);
 ```
@@ -222,7 +228,7 @@ const entityDecoratedWithLinkerValue = googleTagLinker("decorate", settings);
 | settings.linkerQueryParameterName | The query parameter name to use as the linker parameter. | string \| undefined  | `_gl` |
 | settings.gaCookiesPrefix | Prefix to use when looking for `_ga` cookies. | string \| undefined  | `''` (empty string - i.e. no prefix) |
 | settings.conversionLinkerCookiesPrefix | Prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies. | string \| undefined | `_gcl` |
-| settings.cookiesNamesList | List of cookies names to include in the linker parameter or an object containing the cookies names and values | (string \| RegExp)[] \| object \| undefined | `["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha"]` |
+| settings.cookiesNamesList | List of cookies names to include in the linker parameter or an object containing the names and values of the cookies | (string \| RegExp)[] \| object \| undefined | `["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha"]` |
 | settings.entity | The entity (URL string, `<form>` HTML element or `<a>` HTML element) to be decorated. | HTMLAnchorElement \| HTMLFormElement \| string | `false` |
 | settings.useFragment | A flag indicating whether to use the fragment part of the URL or not. | boolean \| undefined | `false` |
 
@@ -233,7 +239,7 @@ Returns the URL string decorated with linker parameter using default arguments.
 const entityDecoratedWithLinkerValue = googleTagLinker("decorate", { entity: 'https://example.com' });
 ```
 
-Returns the URL string decorated with linker parameter using using `my_prefix` as GA4 cookies prefix and `another_prefix` as Conversion Linker cookies prefix.
+Returns the URL string decorated with linker parameter using `my_prefix` as GA4 cookies prefix and `another_prefix` as Conversion Linker cookies prefix.
 ```js
 const entityDecoratedWithLinkerValue = googleTagLinker("decorate", {
     entity: 'https://example.com',
@@ -242,7 +248,7 @@ const entityDecoratedWithLinkerValue = googleTagLinker("decorate", {
 });
 ```
 
-Returns the URL string decorated with linker parameter in the fragment part of the URL and using the `_mylinker` "query parameter".
+Returns the URL string decorated with the linker parameter in the fragment part of the URL and uses the `_mylinker` "query parameter".
 ```js
 const entityDecoratedWithLinkerValue = googleTagLinker("decorate", {
     entity: 'https://example.com',
@@ -260,11 +266,15 @@ Returns the `<a>` HTML element decorated with linker just for the `_my_custom_cl
 ```js
 const entityDecoratedWithLinkerValue = googleTagLinker("decorate", {
     entity: someAnchorElement,
-    cookiesNamesList: ['_my_custom_client_id_cookie', 'my_custom_stream_session_cookie', /^_my_custom_[0-9]/]
+    cookiesNamesList: [
+        '_my_custom_client_id_cookie',
+        'my_custom_stream_session_cookie',
+        /^_my_custom_[0-9]/
+    ]
 });
 ```
 
-Returns the `<a>` HTML element decorated with linker just for the `client_id`, `session_id` and `user_id` cookies and their values.
+Returns the `<a>` HTML element decorated with linker just for the `client_id`, `session_id`, and `user_id` cookies and their values.
 ```js
 const entityDecoratedWithLinkerValue = googleTagLinker("decorate", {
     entity: someAnchorElement,
