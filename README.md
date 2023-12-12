@@ -144,7 +144,7 @@ const linkerParam = googleTagLinker("get", settings);
 |---|---|---|---|
 | settings.gaCookiesPrefix | Prefix to use when looking for `_ga` cookies. | string\|undefined  | `''` (empty string - i.e. no prefix) |
 | settings.conversionLinkerCookiesPrefix | Prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies. | string\|undefined | `_gcl` |
-| settings.cookiesNamesList | List of cookies names to include in the linker parameter or an object containing the names and values of the cookies | (string\|RegExp)[]\|object\|undefined | `["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha", "_gcl_au", "FPAU"]` |
+| settings.cookiesNamesList | List of cookies names to include in the linker parameter or an object containing the names and values of the cookies | (string\|RegExp)[]\|object\|undefined | `["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", "_gcl_gf", "_gcl_ha", "_gcl_au", "FPAU"]` |
 
 ### Example
 
@@ -230,7 +230,9 @@ const entityDecoratedWithLinkerValue = googleTagLinker("decorate", settings);
 | settings.linkerQueryParameterName | The query parameter name to use as the linker parameter. | string \| undefined  | `_gl` |
 | settings.gaCookiesPrefix | Prefix to use when looking for `_ga` cookies. | string \| undefined  | `''` (empty string - i.e. no prefix) |
 | settings.conversionLinkerCookiesPrefix | Prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies. | string \| undefined | `_gcl` |
-| settings.cookiesNamesList | List of cookies names to include in the linker parameter or an object containing the names and values of the cookies | (string \| RegExp)[] \| object \| undefined | `["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha", "_gcl_au", "FPAU"]` |
+| settings.cookiesNamesList | List of cookies names to include in the linker parameter or an object containing the names and values of the cookies | (string \| RegExp)[] \| object \| undefined | `[
+"_ga", /^_ga_[A-Z,0-9]/, 
+"FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha", "_gcl_au", "FPAU"]` |
 | settings.entity | The entity (URL string, `<form>` HTML element or `<a>` HTML element) to be decorated. | HTMLAnchorElement \| HTMLFormElement \| string | `false` |
 | settings.useFragment | A flag indicating whether to use the fragment part of the URL or not. | boolean \| undefined | `false` |
 
@@ -291,4 +293,5 @@ const entityDecoratedWithLinkerValue = googleTagLinker("decorate", {
 # Authors
 
 [David Vallejo](https://www.thyngster.com)
+
 [Giovani Ortolani Barbosa](https://www.linkedin.com/in/giovani-ortolani-barbosa/)
