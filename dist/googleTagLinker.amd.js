@@ -1,6 +1,6 @@
 /*!
 *
-*   @giovaniortolani/google-tag-linker 0.1.1
+*   @giovaniortolanibarbosa/google-tag-linker 0.1.1
 *   https://github.com/analytics-debugger/google-tag-linker
 *   https://github.com/giovaniortolani/google-tag-linker
 *
@@ -99,13 +99,16 @@ define((function () { 'use strict';
      * @param {object} [settings={}] - the settings object
      * @param {(string|RegExp)[]|object} settings.cookiesNamesList - an array with the cookies names to be passed on the linker, or an object with the cookies names and values
      * @param {string} settings.gaCookiesPrefix - prefix for the Google Analytics cookies
-     * @returns {string[]} - an array containing the linker value for each cookie. Example: ['_ga_THYNGSTER*XXXXXXXXXXXXXXX', '_gcl_aw*AAAAAAAAAAAA', '_gcl_dc*BBBBBBBBBBB', '_gcl_gb*CCCCCCCCCCCC', '_gcl_gf*DDDDDDDDDDD', '_gcl_ha*EEEEEEEEEEEE', '_fplc*MTExMTExMTExMTExMTExMTExMTEx']
+     * @param {string} settings.conversionLinkerCookiesPrefix - prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies.
+     * @returns {string[]} - an array containing the linker value for each cookie. Example: ['_ga_THYNGSTER*XXXXXXXXXXXXXXX', '_gcl_aw*AAAAAAAAAAAA', '_gcl_dc*BBBBBBBBBBB', '_gcl_gb*CCCCCCCCCCCC', '_gcl_gf*DDDDDDDDDDD', '_gcl_ha*EEEEEEEEEEEE', '_fplc*MTExMTExMTExMTExMTExMTExMTEx', "*_gcl_au*NTYwNjM5MjY2LjE3MDIwNDc1OTk."", "FPAU*NTYwNjM5MjY2LjE3MDIwNDc1OTk.""]
      */
     function generateLinkerValuesFromCookies() {
       var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         cookiesNamesList = _ref2.cookiesNamesList,
-        gaCookiesPrefix = _ref2.gaCookiesPrefix;
+        gaCookiesPrefix = _ref2.gaCookiesPrefix,
+        conversionLinkerCookiesPrefix = _ref2.conversionLinkerCookiesPrefix;
       var gaCookiesRegex = new RegExp("^" + gaCookiesPrefix + "_ga");
+      var gaCookiesExtractValuesRegex = /G[A-Z]1\.[0-9]\.(.+)/;
       var cookiesValuesFormattedForLinker = [];
       var _FPLC = undefined;
 
@@ -126,10 +129,14 @@ define((function () { 'use strict';
           var cookieValue = cookieNameAndValue[1];
           if (!cookieValue) return;
           if (gaCookiesRegex.test(cookieName)) {
-            cookieValue = cookieValue.match(/G[A-Z]1\.[0-9]\.(.+)/)[1];
+            cookieValue = cookieValue.match(gaCookiesExtractValuesRegex)[1];
           } else if (cookieName === "FPLC") {
             _FPLC = cookieValue;
             return;
+          } else if (cookieName === conversionLinkerCookiesPrefix + "_au" || cookieName === "FPAU") {
+            // Example of _gcl_au and FPAU cookies: 1.3.1762596121.1701984387
+            // Just the 1762596121.1701984387 is used in the linker.
+            cookieValue = cookieValue.split(".").slice(2).join(".");
           }
           cookiesValuesFormattedForLinker.push(transformCookieNameAndValueToLinkerFormat(cookieName, cookieValue));
         });
@@ -273,15 +280,18 @@ define((function () { 'use strict';
      * @param {object} [settings={}] - the settings object
      * @param {(string|RegExp)[]|object} settings.cookiesNamesList - an array with the cookies names to be passed on the linker, or an object with the cookies names and values
      * @param {string} settings.gaCookiesPrefix - prefix for the Google Analytics cookies
+     * @param {string} settings.conversionLinkerCookiesPrefix - prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies.
      * @returns {string} - the linker parameter. Example: 1*dm649n*_ga*MTM2MDM4NDg1MS4xNjYxODIxMjQy*_ga_THYNGSTER*XXXXXXXXXXXXXXX*_gcl_aw*AAAAAAAAAAAA*_gcl_dc*BBBBBBBBBBB*_gcl_gb*CCCCCCCCCCCC*_gcl_gf*DDDDDDDDDDD*_gcl_ha*EEEEEEEEEEEE*_fplc*MTExMTExMTExMTExMTExMTExMTEx
      */
     function getLinker() {
       var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         cookiesNamesList = _ref.cookiesNamesList,
-        gaCookiesPrefix = _ref.gaCookiesPrefix;
+        gaCookiesPrefix = _ref.gaCookiesPrefix,
+        conversionLinkerCookiesPrefix = _ref.conversionLinkerCookiesPrefix;
       var linkerCookiesValues = generateLinkerValuesFromCookies({
         cookiesNamesList: cookiesNamesList,
-        gaCookiesPrefix: gaCookiesPrefix
+        gaCookiesPrefix: gaCookiesPrefix,
+        conversionLinkerCookiesPrefix: conversionLinkerCookiesPrefix
       });
       return ["1", getFingerPrint(linkerCookiesValues), linkerCookiesValues.join("*")].join("*");
     }
@@ -309,6 +319,7 @@ define((function () { 'use strict';
      * @param {string} settings.linkerQueryParameterName - the parameter name of the linker in the URL
      * @param {(string|RegExp)[]|object} settings.cookiesNamesList - an array with the cookies names to be passed on the linker, or an object with the cookies names and values
      * @param {string} settings.gaCookiesPrefix - prefix for the Google Analytics cookies
+     * @param {string} settings.conversionLinkerCookiesPrefix - prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies.
      * @param {HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated
      * @param {boolean} settings.useFragment - whether to place the linker parameter in the fragment part of the URL or in the query string
      * @returns {HTMLAnchorElement|HTMLFormElement|string} - the entity (<a>, <form> or an URL) decorated with the linker parameter
@@ -318,11 +329,13 @@ define((function () { 'use strict';
         linkerQueryParameterName = _ref3.linkerQueryParameterName,
         cookiesNamesList = _ref3.cookiesNamesList,
         gaCookiesPrefix = _ref3.gaCookiesPrefix,
+        conversionLinkerCookiesPrefix = _ref3.conversionLinkerCookiesPrefix,
         entity = _ref3.entity,
         useFragment = _ref3.useFragment;
       var linkerParameter = getLinker({
         cookiesNamesList: cookiesNamesList,
-        gaCookiesPrefix: gaCookiesPrefix
+        gaCookiesPrefix: gaCookiesPrefix,
+        conversionLinkerCookiesPrefix: conversionLinkerCookiesPrefix
       });
       if (entity.tagName) {
         if ("A" === entity.tagName) {
@@ -349,7 +362,7 @@ define((function () { 'use strict';
      * @param {boolean|undefined} settings.checkFingerPrint - enable or disable checking the fingerprint of the linker parameter. Default: false.
      * @param {HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated.
      * @param {boolean|undefined} settings.useFragment - whether to place the linker parameter in the fragment part of the URL or in the query string. Default: false.
-     * @param {(string|RegExp)[]|object|undefined} settings.cookiesNamesList - list of cookies names to include in the linker parameter or an object containing the cookies names and values. Default: ["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha"].
+     * @param {(string|RegExp)[]|object|undefined} settings.cookiesNamesList - list of cookies names to include in the linker parameter or an object containing the cookies names and values. Default: ["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha", "_gcl_au", "FPAU"].
      * @returns {HTMLAnchorElement|HTMLFormElement|string|undefined} Returns the linker parameter, the values read from the linker parameter, the entities decorated with the linker parameter or undefined.
      */
     var googleTagLinker = function googleTagLinker() {
@@ -375,12 +388,15 @@ define((function () { 'use strict';
         // Google Analytics 4 Session Cookie (e.g. Data Stream ID is G-ABC123, the cookie will be <prefix>_ga_ABC123)
         new RegExp("^" + defaultSettings.gaCookiesPrefix + "_ga_[A-Z,0-9]"),
         // First Party Linker Cookie maps to sGTM
-        "FPLC"];
+        "FPLC",
+        // First Party Linker Cookie Advertising ID maps to sGTM (same as _gcl_au)
+        "FPAU"];
 
         // Google Ads (gclid, gclsrc maps to _aw, _dc, _gf, _ha cookies)
         // Campaign Manager (dclid, gclsrc maps to _aw, _dc, _gf, _ha cookies)
         // wbraid (wbraid maps to _gb cookie)
-        ["_aw", "_dc", "_gb", "_gf", "_ha"].forEach(function (name) {
+        // Advertising ID - value that is generated randomly and is used by Ads tags to join data  (_au cookie)
+        ["_aw", "_dc", "_gb", "_gf", "_ha", "_au"].forEach(function (name) {
           defaultSettings.cookiesNamesList.push(defaultSettings.conversionLinkerCookiesPrefix + name);
         });
       }
@@ -388,7 +404,8 @@ define((function () { 'use strict';
         case "get":
           return getLinker({
             cookiesNamesList: defaultSettings.cookiesNamesList,
-            gaCookiesPrefix: defaultSettings.gaCookiesPrefix
+            gaCookiesPrefix: defaultSettings.gaCookiesPrefix,
+            conversionLinkerCookiesPrefix: defaultSettings.conversionLinkerCookiesPrefix
           });
         case "read":
           return readLinker({
@@ -400,6 +417,7 @@ define((function () { 'use strict';
             linkerQueryParameterName: defaultSettings.linkerQueryParameterName,
             cookiesNamesList: defaultSettings.cookiesNamesList,
             gaCookiesPrefix: defaultSettings.gaCookiesPrefix,
+            conversionLinkerCookiesPrefix: defaultSettings.conversionLinkerCookiesPrefix,
             entity: settings.entity,
             useFragment: defaultSettings.useFragment
           });

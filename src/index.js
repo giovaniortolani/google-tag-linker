@@ -12,7 +12,7 @@ import { getLinker, readLinker, decorateWithLinker } from "./actions.js";
  * @param {boolean|undefined} settings.checkFingerPrint - enable or disable checking the fingerprint of the linker parameter. Default: false.
  * @param {HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated.
  * @param {boolean|undefined} settings.useFragment - whether to place the linker parameter in the fragment part of the URL or in the query string. Default: false.
- * @param {(string|RegExp)[]|object|undefined} settings.cookiesNamesList - list of cookies names to include in the linker parameter or an object containing the cookies names and values. Default: ["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha"].
+ * @param {(string|RegExp)[]|object|undefined} settings.cookiesNamesList - list of cookies names to include in the linker parameter or an object containing the cookies names and values. Default: ["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha", "_gcl_au", "FPAU"].
  * @returns {HTMLAnchorElement|HTMLFormElement|string|undefined} Returns the linker parameter, the values read from the linker parameter, the entities decorated with the linker parameter or undefined.
  */
 const googleTagLinker = function (action = "get", settings = {}) {
@@ -40,13 +40,17 @@ const googleTagLinker = function (action = "get", settings = {}) {
             new RegExp("^" + defaultSettings.gaCookiesPrefix + "_ga_[A-Z,0-9]"),
 
             // First Party Linker Cookie maps to sGTM
-            "FPLC"
+            "FPLC",
+
+            // First Party Linker Cookie Advertising ID maps to sGTM (same as _gcl_au)
+            "FPAU"
         ];
 
         // Google Ads (gclid, gclsrc maps to _aw, _dc, _gf, _ha cookies)
         // Campaign Manager (dclid, gclsrc maps to _aw, _dc, _gf, _ha cookies)
         // wbraid (wbraid maps to _gb cookie)
-        ["_aw", "_dc", "_gb", "_gf", "_ha"].forEach((name) => {
+        // Advertising ID - value that is generated randomly and is used by Ads tags to join data  (_au cookie)
+        ["_aw", "_dc", "_gb", "_gf", "_ha", "_au"].forEach((name) => {
             defaultSettings.cookiesNamesList.push(
                 defaultSettings.conversionLinkerCookiesPrefix + name
             );
@@ -57,7 +61,8 @@ const googleTagLinker = function (action = "get", settings = {}) {
         case "get":
             return getLinker({
                 cookiesNamesList: defaultSettings.cookiesNamesList,
-                gaCookiesPrefix: defaultSettings.gaCookiesPrefix
+                gaCookiesPrefix: defaultSettings.gaCookiesPrefix,
+                conversionLinkerCookiesPrefix: defaultSettings.conversionLinkerCookiesPrefix
             });
         case "read":
             return readLinker({
@@ -69,6 +74,7 @@ const googleTagLinker = function (action = "get", settings = {}) {
                 linkerQueryParameterName: defaultSettings.linkerQueryParameterName,
                 cookiesNamesList: defaultSettings.cookiesNamesList,
                 gaCookiesPrefix: defaultSettings.gaCookiesPrefix,
+                conversionLinkerCookiesPrefix: defaultSettings.conversionLinkerCookiesPrefix,
                 entity: settings.entity,
                 useFragment: defaultSettings.useFragment
             });

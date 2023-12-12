@@ -87,10 +87,16 @@ export function getLinkerValuesFromUrl({ linkerQueryParameterName, checkFingerPr
  * @param {object} [settings={}] - the settings object
  * @param {(string|RegExp)[]|object} settings.cookiesNamesList - an array with the cookies names to be passed on the linker, or an object with the cookies names and values
  * @param {string} settings.gaCookiesPrefix - prefix for the Google Analytics cookies
- * @returns {string[]} - an array containing the linker value for each cookie. Example: ['_ga_THYNGSTER*XXXXXXXXXXXXXXX', '_gcl_aw*AAAAAAAAAAAA', '_gcl_dc*BBBBBBBBBBB', '_gcl_gb*CCCCCCCCCCCC', '_gcl_gf*DDDDDDDDDDD', '_gcl_ha*EEEEEEEEEEEE', '_fplc*MTExMTExMTExMTExMTExMTExMTEx']
+ * @param {string} settings.conversionLinkerCookiesPrefix - prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies.
+ * @returns {string[]} - an array containing the linker value for each cookie. Example: ['_ga_THYNGSTER*XXXXXXXXXXXXXXX', '_gcl_aw*AAAAAAAAAAAA', '_gcl_dc*BBBBBBBBBBB', '_gcl_gb*CCCCCCCCCCCC', '_gcl_gf*DDDDDDDDDDD', '_gcl_ha*EEEEEEEEEEEE', '_fplc*MTExMTExMTExMTExMTExMTExMTEx', "*_gcl_au*NTYwNjM5MjY2LjE3MDIwNDc1OTk."", "FPAU*NTYwNjM5MjY2LjE3MDIwNDc1OTk.""]
  */
-export function generateLinkerValuesFromCookies({ cookiesNamesList, gaCookiesPrefix } = {}) {
+export function generateLinkerValuesFromCookies({
+    cookiesNamesList,
+    gaCookiesPrefix,
+    conversionLinkerCookiesPrefix
+} = {}) {
     const gaCookiesRegex = new RegExp("^" + gaCookiesPrefix + "_ga");
+    const gaCookiesExtractValuesRegex = /G[A-Z]1\.[0-9]\.(.+)/;
     const cookiesValuesFormattedForLinker = [];
     let _FPLC = undefined;
 
@@ -113,10 +119,17 @@ export function generateLinkerValuesFromCookies({ cookiesNamesList, gaCookiesPre
             let cookieValue = cookieNameAndValue[1];
             if (!cookieValue) return;
             if (gaCookiesRegex.test(cookieName)) {
-                cookieValue = cookieValue.match(/G[A-Z]1\.[0-9]\.(.+)/)[1];
+                cookieValue = cookieValue.match(gaCookiesExtractValuesRegex)[1];
             } else if (cookieName === "FPLC") {
                 _FPLC = cookieValue;
                 return;
+            } else if (
+                cookieName === conversionLinkerCookiesPrefix + "_au" ||
+                cookieName === "FPAU"
+            ) {
+                // Example of _gcl_au and FPAU cookies: 1.3.1762596121.1701984387
+                // Just the 1762596121.1701984387 is used in the linker.
+                cookieValue = cookieValue.split(".").slice(2).join(".");
             }
             cookiesValuesFormattedForLinker.push(
                 transformCookieNameAndValueToLinkerFormat(cookieName, cookieValue)

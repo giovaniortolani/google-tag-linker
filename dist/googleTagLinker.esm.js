@@ -87,10 +87,16 @@ function getLinkerValuesFromUrl({ linkerQueryParameterName, checkFingerPrint } =
  * @param {object} [settings={}] - the settings object
  * @param {(string|RegExp)[]|object} settings.cookiesNamesList - an array with the cookies names to be passed on the linker, or an object with the cookies names and values
  * @param {string} settings.gaCookiesPrefix - prefix for the Google Analytics cookies
- * @returns {string[]} - an array containing the linker value for each cookie. Example: ['_ga_THYNGSTER*XXXXXXXXXXXXXXX', '_gcl_aw*AAAAAAAAAAAA', '_gcl_dc*BBBBBBBBBBB', '_gcl_gb*CCCCCCCCCCCC', '_gcl_gf*DDDDDDDDDDD', '_gcl_ha*EEEEEEEEEEEE', '_fplc*MTExMTExMTExMTExMTExMTExMTEx']
+ * @param {string} settings.conversionLinkerCookiesPrefix - prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies.
+ * @returns {string[]} - an array containing the linker value for each cookie. Example: ['_ga_THYNGSTER*XXXXXXXXXXXXXXX', '_gcl_aw*AAAAAAAAAAAA', '_gcl_dc*BBBBBBBBBBB', '_gcl_gb*CCCCCCCCCCCC', '_gcl_gf*DDDDDDDDDDD', '_gcl_ha*EEEEEEEEEEEE', '_fplc*MTExMTExMTExMTExMTExMTExMTEx', "*_gcl_au*NTYwNjM5MjY2LjE3MDIwNDc1OTk."", "FPAU*NTYwNjM5MjY2LjE3MDIwNDc1OTk.""]
  */
-function generateLinkerValuesFromCookies({ cookiesNamesList, gaCookiesPrefix } = {}) {
+function generateLinkerValuesFromCookies({
+    cookiesNamesList,
+    gaCookiesPrefix,
+    conversionLinkerCookiesPrefix
+} = {}) {
     const gaCookiesRegex = new RegExp("^" + gaCookiesPrefix + "_ga");
+    const gaCookiesExtractValuesRegex = /G[A-Z]1\.[0-9]\.(.+)/;
     const cookiesValuesFormattedForLinker = [];
     let _FPLC = undefined;
 
@@ -113,10 +119,17 @@ function generateLinkerValuesFromCookies({ cookiesNamesList, gaCookiesPrefix } =
             let cookieValue = cookieNameAndValue[1];
             if (!cookieValue) return;
             if (gaCookiesRegex.test(cookieName)) {
-                cookieValue = cookieValue.match(/G[A-Z]1\.[0-9]\.(.+)/)[1];
+                cookieValue = cookieValue.match(gaCookiesExtractValuesRegex)[1];
             } else if (cookieName === "FPLC") {
                 _FPLC = cookieValue;
                 return;
+            } else if (
+                cookieName === conversionLinkerCookiesPrefix + "_au" ||
+                cookieName === "FPAU"
+            ) {
+                // Example of _gcl_au and FPAU cookies: 1.3.1762596121.1701984387
+                // Just the 1762596121.1701984387 is used in the linker.
+                cookieValue = cookieValue.split(".").slice(2).join(".");
             }
             cookiesValuesFormattedForLinker.push(
                 transformCookieNameAndValueToLinkerFormat(cookieName, cookieValue)
@@ -288,12 +301,18 @@ function getFingerPrint(linkerCookiesValues = undefined) {
  * @param {object} [settings={}] - the settings object
  * @param {(string|RegExp)[]|object} settings.cookiesNamesList - an array with the cookies names to be passed on the linker, or an object with the cookies names and values
  * @param {string} settings.gaCookiesPrefix - prefix for the Google Analytics cookies
+ * @param {string} settings.conversionLinkerCookiesPrefix - prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies.
  * @returns {string} - the linker parameter. Example: 1*dm649n*_ga*MTM2MDM4NDg1MS4xNjYxODIxMjQy*_ga_THYNGSTER*XXXXXXXXXXXXXXX*_gcl_aw*AAAAAAAAAAAA*_gcl_dc*BBBBBBBBBBB*_gcl_gb*CCCCCCCCCCCC*_gcl_gf*DDDDDDDDDDD*_gcl_ha*EEEEEEEEEEEE*_fplc*MTExMTExMTExMTExMTExMTExMTEx
  */
-function getLinker({ cookiesNamesList, gaCookiesPrefix } = {}) {
+function getLinker({
+    cookiesNamesList,
+    gaCookiesPrefix,
+    conversionLinkerCookiesPrefix
+} = {}) {
     const linkerCookiesValues = generateLinkerValuesFromCookies({
         cookiesNamesList,
-        gaCookiesPrefix
+        gaCookiesPrefix,
+        conversionLinkerCookiesPrefix
     });
 
     return ["1", getFingerPrint(linkerCookiesValues), linkerCookiesValues.join("*")].join("*");
@@ -319,6 +338,7 @@ function readLinker({ linkerQueryParameterName, checkFingerPrint } = {}) {
  * @param {string} settings.linkerQueryParameterName - the parameter name of the linker in the URL
  * @param {(string|RegExp)[]|object} settings.cookiesNamesList - an array with the cookies names to be passed on the linker, or an object with the cookies names and values
  * @param {string} settings.gaCookiesPrefix - prefix for the Google Analytics cookies
+ * @param {string} settings.conversionLinkerCookiesPrefix - prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies.
  * @param {HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated
  * @param {boolean} settings.useFragment - whether to place the linker parameter in the fragment part of the URL or in the query string
  * @returns {HTMLAnchorElement|HTMLFormElement|string} - the entity (<a>, <form> or an URL) decorated with the linker parameter
@@ -327,12 +347,14 @@ function decorateWithLinker({
     linkerQueryParameterName,
     cookiesNamesList,
     gaCookiesPrefix,
+    conversionLinkerCookiesPrefix,
     entity,
     useFragment
 } = {}) {
     const linkerParameter = getLinker({
         cookiesNamesList,
-        gaCookiesPrefix
+        gaCookiesPrefix,
+        conversionLinkerCookiesPrefix
     });
 
     if (entity.tagName) {
@@ -371,7 +393,7 @@ function decorateWithLinker({
  * @param {boolean|undefined} settings.checkFingerPrint - enable or disable checking the fingerprint of the linker parameter. Default: false.
  * @param {HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated.
  * @param {boolean|undefined} settings.useFragment - whether to place the linker parameter in the fragment part of the URL or in the query string. Default: false.
- * @param {(string|RegExp)[]|object|undefined} settings.cookiesNamesList - list of cookies names to include in the linker parameter or an object containing the cookies names and values. Default: ["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha"].
+ * @param {(string|RegExp)[]|object|undefined} settings.cookiesNamesList - list of cookies names to include in the linker parameter or an object containing the cookies names and values. Default: ["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha", "_gcl_au", "FPAU"].
  * @returns {HTMLAnchorElement|HTMLFormElement|string|undefined} Returns the linker parameter, the values read from the linker parameter, the entities decorated with the linker parameter or undefined.
  */
 const googleTagLinker = function (action = "get", settings = {}) {
@@ -399,13 +421,17 @@ const googleTagLinker = function (action = "get", settings = {}) {
             new RegExp("^" + defaultSettings.gaCookiesPrefix + "_ga_[A-Z,0-9]"),
 
             // First Party Linker Cookie maps to sGTM
-            "FPLC"
+            "FPLC",
+
+            // First Party Linker Cookie Advertising ID maps to sGTM (same as _gcl_au)
+            "FPAU"
         ];
 
         // Google Ads (gclid, gclsrc maps to _aw, _dc, _gf, _ha cookies)
         // Campaign Manager (dclid, gclsrc maps to _aw, _dc, _gf, _ha cookies)
         // wbraid (wbraid maps to _gb cookie)
-        ["_aw", "_dc", "_gb", "_gf", "_ha"].forEach((name) => {
+        // Advertising ID - value that is generated randomly and is used by Ads tags to join data  (_au cookie)
+        ["_aw", "_dc", "_gb", "_gf", "_ha", "_au"].forEach((name) => {
             defaultSettings.cookiesNamesList.push(
                 defaultSettings.conversionLinkerCookiesPrefix + name
             );
@@ -416,7 +442,8 @@ const googleTagLinker = function (action = "get", settings = {}) {
         case "get":
             return getLinker({
                 cookiesNamesList: defaultSettings.cookiesNamesList,
-                gaCookiesPrefix: defaultSettings.gaCookiesPrefix
+                gaCookiesPrefix: defaultSettings.gaCookiesPrefix,
+                conversionLinkerCookiesPrefix: defaultSettings.conversionLinkerCookiesPrefix
             });
         case "read":
             return readLinker({
@@ -428,6 +455,7 @@ const googleTagLinker = function (action = "get", settings = {}) {
                 linkerQueryParameterName: defaultSettings.linkerQueryParameterName,
                 cookiesNamesList: defaultSettings.cookiesNamesList,
                 gaCookiesPrefix: defaultSettings.gaCookiesPrefix,
+                conversionLinkerCookiesPrefix: defaultSettings.conversionLinkerCookiesPrefix,
                 entity: settings.entity,
                 useFragment: defaultSettings.useFragment
             });
