@@ -50,9 +50,9 @@ export function readLinker({ linkerQueryParameterName, checkFingerPrint } = {}) 
  * @param {(string|RegExp)[]|object} settings.cookiesNamesList - an array with the cookies names to be passed on the linker, or an object with the cookies names and values
  * @param {string} settings.gaCookiesPrefix - prefix for the Google Analytics cookies
  * @param {string} settings.conversionLinkerCookiesPrefix - prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies.
- * @param {HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated
+ * @param {(HTMLAnchorElement|HTMLFormElement|string)[]|NodeList<HTMLAnchorElement|HTMLFormElement>|HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated or an array with the entities (<a>, <form> or an URL) or a NodeList with the entities (<a> or <form>)
  * @param {boolean} settings.useFragment - whether to place the linker parameter in the fragment part of the URL or in the query string
- * @returns {HTMLAnchorElement|HTMLFormElement|string} - the entity (<a>, <form> or an URL) decorated with the linker parameter
+ * @returns {HTMLAnchorElement|HTMLFormElement|string|undefined} - the entity (<a>, <form> or an URL) decorated with the linker parameter
  */
 export function decorateWithLinker({
     linkerQueryParameterName,
@@ -62,29 +62,47 @@ export function decorateWithLinker({
     entity,
     useFragment
 } = {}) {
+    const elementsDecorated = [];
     const linkerParameter = getLinker({
         cookiesNamesList,
         gaCookiesPrefix,
         conversionLinkerCookiesPrefix
     });
 
-    if (entity.tagName) {
-        if ("A" === entity.tagName) {
-            return decorateAnchorTagWithLinker(
+    if (!Array.isArray(entity) && !(entity instanceof NodeList)) {
+        entity = [entity];
+    }
+
+    entity.forEach((elementToDecorate) => {
+        let elementDecorated;
+        if (elementToDecorate.tagName) {
+            if ("A" === elementToDecorate.tagName) {
+                elementDecorated = decorateAnchorTagWithLinker(
+                    linkerQueryParameterName,
+                    linkerParameter,
+                    elementToDecorate,
+                    useFragment
+                );
+            } else if ("FORM" === elementToDecorate.tagName) {
+                elementDecorated = decorateFormTagWithLinker(
+                    linkerQueryParameterName,
+                    linkerParameter,
+                    elementToDecorate
+                );
+            }
+        } else if ("string" === typeof elementToDecorate) {
+            elementDecorated = decorateURLWithLinker(
                 linkerQueryParameterName,
                 linkerParameter,
-                entity,
+                elementToDecorate,
                 useFragment
             );
-        } else if ("FORM" === entity.tagName) {
-            return decorateFormTagWithLinker(linkerQueryParameterName, linkerParameter, entity);
         }
-    } else if ("string" === typeof entity) {
-        return decorateURLWithLinker(
-            linkerQueryParameterName,
-            linkerParameter,
-            entity,
-            useFragment
-        );
-    }
+
+        if (elementDecorated) {
+            elementsDecorated.push(elementDecorated);
+        }
+    });
+
+    return elementsDecorated.length ? elementsDecorated : undefined;
 }

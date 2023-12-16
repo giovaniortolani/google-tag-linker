@@ -1,6 +1,6 @@
 /*!
 *
-*   @giovaniortolanibarbosa/google-tag-linker 0.1.4
+*   @giovaniortolanibarbosa/google-tag-linker 0.1.6
 *   https://github.com/analytics-debugger/google-tag-linker
 *   https://github.com/giovaniortolani/google-tag-linker
 *
@@ -321,9 +321,9 @@ var googleTagLinker = (function () {
      * @param {(string|RegExp)[]|object} settings.cookiesNamesList - an array with the cookies names to be passed on the linker, or an object with the cookies names and values
      * @param {string} settings.gaCookiesPrefix - prefix for the Google Analytics cookies
      * @param {string} settings.conversionLinkerCookiesPrefix - prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies.
-     * @param {HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated
+     * @param {(HTMLAnchorElement|HTMLFormElement|string)[]|NodeList<HTMLAnchorElement|HTMLFormElement>|HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated or an array with the entities (<a>, <form> or an URL) or a NodeList with the entities (<a> or <form>)
      * @param {boolean} settings.useFragment - whether to place the linker parameter in the fragment part of the URL or in the query string
-     * @returns {HTMLAnchorElement|HTMLFormElement|string} - the entity (<a>, <form> or an URL) decorated with the linker parameter
+     * @returns {HTMLAnchorElement|HTMLFormElement|string|undefined} - the entity (<a>, <form> or an URL) decorated with the linker parameter
      */
     function decorateWithLinker() {
       var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -333,33 +333,44 @@ var googleTagLinker = (function () {
         conversionLinkerCookiesPrefix = _ref3.conversionLinkerCookiesPrefix,
         entity = _ref3.entity,
         useFragment = _ref3.useFragment;
+      var elementsDecorated = [];
       var linkerParameter = getLinker({
         cookiesNamesList: cookiesNamesList,
         gaCookiesPrefix: gaCookiesPrefix,
         conversionLinkerCookiesPrefix: conversionLinkerCookiesPrefix
       });
-      if (entity.tagName) {
-        if ("A" === entity.tagName) {
-          return decorateAnchorTagWithLinker(linkerQueryParameterName, linkerParameter, entity, useFragment);
-        } else if ("FORM" === entity.tagName) {
-          return decorateFormTagWithLinker(linkerQueryParameterName, linkerParameter, entity);
-        }
-      } else if ("string" === typeof entity) {
-        return decorateURLWithLinker(linkerQueryParameterName, linkerParameter, entity, useFragment);
+      if (!Array.isArray(entity) && !(entity instanceof NodeList)) {
+        entity = [entity];
       }
+      entity.forEach(function (elementToDecorate) {
+        var elementDecorated;
+        if (elementToDecorate.tagName) {
+          if ("A" === elementToDecorate.tagName) {
+            elementDecorated = decorateAnchorTagWithLinker(linkerQueryParameterName, linkerParameter, elementToDecorate, useFragment);
+          } else if ("FORM" === elementToDecorate.tagName) {
+            elementDecorated = decorateFormTagWithLinker(linkerQueryParameterName, linkerParameter, elementToDecorate);
+          }
+        } else if ("string" === typeof elementToDecorate) {
+          elementDecorated = decorateURLWithLinker(linkerQueryParameterName, linkerParameter, elementToDecorate, useFragment);
+        }
+        if (elementDecorated) {
+          elementsDecorated.push(elementDecorated);
+        }
+      });
+      return elementsDecorated.length ? elementsDecorated : undefined;
     }
 
     /**
      * Main function to create and return the linker parameter for Google Tag cross-domain tracking.
      *
-     * @function
+     * @function googleTagLinker
      *
      * @param {string|undefined} action - The action for the function to execute. Available options: "get", "read", "decorate". Default: "get".
      * @param {string|undefined} settings.gaCookiesPrefix - the prefix to use when looking for _ga cookies. Default: "".
      * @param {string|undefined} settings.conversionLinkerCookiesPrefix - the prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies. Default: "_gcl".
      * @param {string|undefined} settings.linkerQueryParameterName - the query parameter name to use as the linker parameter. Default: "_gl".
      * @param {boolean|undefined} settings.checkFingerPrint - enable or disable checking the fingerprint of the linker parameter. Default: false.
-     * @param {HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated.
+     * @param {(HTMLAnchorElement|HTMLFormElement|string)[]|NodeList<HTMLAnchorElement|HTMLFormElement>|HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated or an array with the entities (<a>, <form> or an URL) or a NodeList with the entities (<a> or <form>).
      * @param {boolean|undefined} settings.useFragment - whether to place the linker parameter in the fragment part of the URL or in the query string. Default: false.
      * @param {(string|RegExp)[]|object|undefined} settings.cookiesNamesList - list of cookies names to include in the linker parameter or an object containing the cookies names and values. Default: ["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha", "_gcl_au", "FPAU"].
      * @returns {HTMLAnchorElement|HTMLFormElement|string|undefined} Returns the linker parameter, the values read from the linker parameter, the entities decorated with the linker parameter or undefined.
