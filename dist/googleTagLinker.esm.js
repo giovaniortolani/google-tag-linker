@@ -88,7 +88,7 @@ function getLinkerValuesFromUrl({ linkerQueryParameterName, checkFingerPrint } =
  * @param {(string|RegExp)[]|object} settings.cookiesNamesList - an array with the cookies names to be passed on the linker, or an object with the cookies names and values
  * @param {string} settings.gaCookiesPrefix - prefix for the Google Analytics cookies
  * @param {string} settings.conversionLinkerCookiesPrefix - prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies.
- * @returns {string[]} - an array containing the linker value for each cookie. Example: ['_ga_THYNGSTER*XXXXXXXXXXXXXXX', '_gcl_aw*AAAAAAAAAAAA', '_gcl_dc*BBBBBBBBBBB', '_gcl_gb*CCCCCCCCCCCC', '_gcl_gf*DDDDDDDDDDD', '_gcl_ha*EEEEEEEEEEEE', '_fplc*MTExMTExMTExMTExMTExMTExMTEx', "*_gcl_au*NTYwNjM5MjY2LjE3MDIwNDc1OTk."", "FPAU*NTYwNjM5MjY2LjE3MDIwNDc1OTk.""]
+ * @returns {string[]} - an array containing the linker value for each cookie. Example: ['_gcl_au*NTYwNjM5MjY2LjE3MDIwNDc1OTk.', 'FPAU*NTYwNjM5MjY2LjE3MDIwNDc1OTk.', '_ga*2MDM4NDg1MS4xNjYxODIxMjQy', _ga_THYNGSTER*XXXXXXXXXXXXXXX', '_gcl_aw*AAAAAAAAAAAA', '_gcl_dc*BBBBBBBBBBB', '_gcl_gb*CCCCCCCCCCCC', '_gcl_gf*DDDDDDDDDDD', '_gcl_ha*EEEEEEEEEEEE', '_fplc*MTExMTExMTExMTExMTExMTExMTEx']
  */
 function generateLinkerValuesFromCookies({
     cookiesNamesList,
@@ -365,13 +365,10 @@ function decorateWithLinker({
                 entity,
                 useFragment
             );
-        }
-        if ("FORM" === entity.tagName) {
+        } else if ("FORM" === entity.tagName) {
             return decorateFormTagWithLinker(linkerQueryParameterName, linkerParameter, entity);
         }
-    }
-
-    if ("string" === typeof entity) {
+    } else if ("string" === typeof entity) {
         return decorateURLWithLinker(
             linkerQueryParameterName,
             linkerParameter,
@@ -423,14 +420,14 @@ const googleTagLinker = function (action = "get", settings = {}) {
             // First Party Linker Cookie maps to sGTM
             "FPLC",
 
-            // First Party Linker Cookie Advertising ID maps to sGTM (same as _gcl_au)
+            // First Party Advertiser User ID maps to sGTM (same as _gcl_au)
             "FPAU"
         ];
 
         // Google Ads (gclid, gclsrc maps to _aw, _dc, _gf, _ha cookies)
         // Campaign Manager (dclid, gclsrc maps to _aw, _dc, _gf, _ha cookies)
         // wbraid (wbraid maps to _gb cookie)
-        // Advertising ID - value that is generated randomly and is used by Ads tags to join data  (_au cookie)
+        // Advertising ID - value that is generated randomly and is used by Googe Ads tags to join with ad click data (_au cookie)
         ["_aw", "_dc", "_gb", "_gf", "_ha", "_au"].forEach((name) => {
             defaultSettings.cookiesNamesList.push(
                 defaultSettings.conversionLinkerCookiesPrefix + name

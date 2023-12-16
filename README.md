@@ -1,6 +1,9 @@
-# Table of contents
+# Google Tag Linker Brigde (and for any other analytics/marketing tools)
 
-- [Google Tag Linker Brigde](#google-tag-linker-brigde-and-any-other-analyticsmarketing-tools)
+## Table of contents
+
+- [Original project](#original-project)
+- [Google Tag Linker Brigde (and any other analytics/marketing tools)](#google-tag-linker-brigde-and-any-other-analyticsmarketing-tools)
 - [How does Google Tag cross-domain work](#how-does-google-tag-cross-domain-work)
 - [Notes](#notes)
 - [To-Do](#to-do)
@@ -18,16 +21,21 @@
     + [Example](#example-2)
 - [Authors](#authors)
 
-# Google Tag Linker Brigde (and any other analytics/marketing tools)
+## Original project
 
-Hola! Olá! This is a **JavaScript** library that provided the needed functionality for creating a `linkerParam` for Google Analytics 4 (**_`Google Tag`_**, **_`GTAG`_**). I
-It also works for any other analytics/marketing tools.
+This is a fork from the [David Vallejo](https://www.thyngster.com)'s original work.
+You can find the original version [here](https://github.com/analytics-debugger/google-tag-linker).
+
+## Description
+
+Hola! Olá! This is a **JavaScript** library that provided the needed functionality for creating a `linkerParam` for Google Analytics 4 (**_`Google Tag`_**, **_`gtag`_**). I
+It also works for any other analytics/marketing tools of your choice, such as: Amplitude, Meta, Google Ads etc.
 
 At the time of publishing this library, Google doesn't offer any "documented" way of generating this value, making really hard to work with custom implementations, for example when needing to deal with iFrames or forms/links generated dynamically.
 
 The library is provided in the `AMD`, `UMD`, `IIFE`, and `ESM` formats, all of them available in the `dist` folder.
 
-# How does Google Tag cross-domain work
+## How does Google Tag cross-domain work
 
 Google Tag cross-domain works pretty similarly to how previous Google Analytics worked. It's basically based on 2 different parts.
 
@@ -63,19 +71,19 @@ This tool will read and pass the following cookies by default:
 | `({{prefix}}\|_gcl)`_gb | Google Analytics Ads / Campaign Manager Cookies - gclid, dclid, gclsrc, wbraid URL parameters |
 | `({{prefix}}\|_gcl)`_gf | Google Analytics Ads / Campaign Manager Cookies - gclid, dclid, gclsrc URL parameters  |
 | `({{prefix}}\|_gcl)`_ha | Google Analytics Ads / Campaign Manager Cookies - gclid, dclid, gclsrc URL parameters |
-| `({{prefix}}\|_gcl)`_au | Google Analytics Ads / Campaign Manager Cookies - Advertising ID - value that is generated randomly and is used by Ads tags to join data |
-| FPAU | First Party Linker Cookie Advertising ID from sGTM (same as _gcl_au) |
-| FPLC | First Party Linker Cookie from sGTM |
+| `({{prefix}}\|_gcl)`_au | Google Analytics Ads / Campaign Manager Cookies - [Advertiser User ID](https://support.google.com/google-ads/answer/9148089?hl=en) - value that is generated randomly and is used by Googe Ads tags to join with ad click data |
+| FPAU | First Party [Advertiser User ID](https://support.google.com/google-ads/answer/9148089?hl=en) from sGTM (it has the same purpose as `({{prefix}}\|_gcl)`_au) |
+| FPLC | First Party Linker Cookie from sGTM that contains the [Client ID](https://www.simoahava.com/gtm-tips/cross-domain-tracking-server-side-fpid-cookie/) (it has the same purpose as `({{prefix}})?`_ga) |
 
 You can also specify a list of cookie names to be read or an object containing the cookie names (as keys) and cookie values (as values).
 
-# Notes
+## Notes
 
 This is a beta version, while it should work fine for doing GA4 cross-domain tracking. Check the next section.
 
 When there are multiple GA4 session cookies, the code reads the last one present in `document.cookie` string, if it wasn't manually passed to the `googleTagLinker` function as an argument.
 
-# To-Do
+## To-Do
 
 - [x] Add Adwords / Double Click Support
 - [x] QA environments with multiple cookies
@@ -85,27 +93,28 @@ When there are multiple GA4 session cookies, the code reads the last one present
 - [ ] Add tests
 - [ ] Refactoring / TypeScript
 
-# Build
+## Build
 
 ```bash
 $ npm install
 $ npm run build
 ```
 
-# How to use
+## How to use
 
-## Installation
+### Installation
 
 There are 3 options to run the script.
 
-### Using `import`
+#### Using `import`
 
 ```js
 import googleTagLinker from '@giovaniortolanibarbosa/google-tag-linker';
 const linkerParam = googleTagLinker("get");
 ```
 
-### Loading a bundle files of `dist` folder via CDN
+#### Loading a bundle files of `dist` folder via CDN
+
 Choose your preferred version inside the `dist` folder.
 
 ```html
@@ -115,7 +124,8 @@ Choose your preferred version inside the `dist` folder.
 </script>
 ```
 
-### Self-hosting one of the bundle files of `dist` folder
+#### Self-hosting one of the bundle files of `dist` folder
+
 Keep in mind that **you will not receive updates**. This is a viable approach if you use GTM.
 If installing via GTM, choose the `googleTagLinker.iife.min.js` version.
 
@@ -132,8 +142,7 @@ var googleTagLinker=function(){"use strict";var e=/^(?:(?:https?|mailto|ftp):|[^
 </script>
 ```
 
-
-## `get` method
+### `get` method
 
 The `get` method returns the linker value.
 ```js
@@ -146,7 +155,7 @@ const linkerParam = googleTagLinker("get", settings);
 | settings.conversionLinkerCookiesPrefix | Prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies. | string\|undefined | `_gcl` |
 | settings.cookiesNamesList | List of cookies names to include in the linker parameter or an object containing the names and values of the cookies | (string\|RegExp)[]\|object\|undefined | `["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", "_gcl_gf", "_gcl_ha", "_gcl_au", "FPAU"]` |
 
-### Example
+#### `get` method code example
 
 Returns the linker using the default arguments.
 ```js
@@ -183,7 +192,7 @@ const linkerParam = googleTagLinker("get", {
 });
 ```
 
-## `read` method
+### `read` method
 
 The `read` method reads the linker parameter from the URL and returns an object with its values parsed and decoded.
 ```js
@@ -196,7 +205,7 @@ const linkerParamParsedAndDecoded = googleTagLinker("read", settings);
 | settings.checkFingerPrint | Enable or disable checking the fingerprint of the linker parameter. | boolean \| undefined | `false` |
 
 
-### Example
+#### `read` method code example
 
 Returns the linker from the URL using the default arguments and returns an object with its values parsed and decoded.
 ```js
@@ -218,7 +227,7 @@ const linkerParamParsedAndDecoded = googleTagLinker("read", {
 });
 ```
 
-## `decorate` method
+### `decorate` method
 
 The `decorate` method decorates an entity with the linker value and returns the entity. Entities: URL string, `<form>` HTML element, or `<a>` HTML element.
 ```js
@@ -236,7 +245,7 @@ const entityDecoratedWithLinkerValue = googleTagLinker("decorate", settings);
 | settings.entity | The entity (URL string, `<form>` HTML element or `<a>` HTML element) to be decorated. | HTMLAnchorElement \| HTMLFormElement \| string | `false` |
 | settings.useFragment | A flag indicating whether to use the fragment part of the URL or not. | boolean \| undefined | `false` |
 
-### Example
+#### `decorate` method code example
 
 Returns the URL string decorated with linker parameter using default arguments.
 ```js
@@ -290,7 +299,7 @@ const entityDecoratedWithLinkerValue = googleTagLinker("decorate", {
 });
 ```
 
-# Authors
+## Authors
 
 [David Vallejo](https://www.thyngster.com)
 
