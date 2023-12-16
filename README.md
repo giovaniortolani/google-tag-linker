@@ -118,7 +118,7 @@ const linkerParam = googleTagLinker("get");
 Choose your preferred version inside the `dist` folder.
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@giovaniortolanibarbosa/google-tag-linker@latest/dist/googleTagLinker.iife.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@giovaniortolanibarbosa/google-tag-linker/dist/googleTagLinker.iife.min.js"></script>
 <script>
     const linkerParam = googleTagLinker("get");
 </script>
