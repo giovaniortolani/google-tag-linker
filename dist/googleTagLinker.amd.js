@@ -1,6 +1,6 @@
 /*!
 *
-*   @giovaniortolanibarbosa/google-tag-linker 0.1.3
+*   @giovaniortolanibarbosa/google-tag-linker 0.1.4
 *   https://github.com/analytics-debugger/google-tag-linker
 *   https://github.com/giovaniortolani/google-tag-linker
 *
