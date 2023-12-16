@@ -42,14 +42,14 @@ const googleTagLinker = function (action = "get", settings = {}) {
             // First Party Linker Cookie maps to sGTM
             "FPLC",
 
-            // First Party Linker Cookie Advertising ID maps to sGTM (same as _gcl_au)
+            // First Party Advertiser User ID maps to sGTM (same as _gcl_au)
             "FPAU"
         ];
 
         // Google Ads (gclid, gclsrc maps to _aw, _dc, _gf, _ha cookies)
         // Campaign Manager (dclid, gclsrc maps to _aw, _dc, _gf, _ha cookies)
         // wbraid (wbraid maps to _gb cookie)
-        // Advertising ID - value that is generated randomly and is used by Ads tags to join data  (_au cookie)
+        // Advertising ID - value that is generated randomly and is used by Googe Ads tags to join with ad click data (_au cookie)
         ["_aw", "_dc", "_gb", "_gf", "_ha", "_au"].forEach((name) => {
             defaultSettings.cookiesNamesList.push(
                 defaultSettings.conversionLinkerCookiesPrefix + name

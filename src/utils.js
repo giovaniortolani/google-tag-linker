@@ -88,7 +88,7 @@ export function getLinkerValuesFromUrl({ linkerQueryParameterName, checkFingerPr
  * @param {(string|RegExp)[]|object} settings.cookiesNamesList - an array with the cookies names to be passed on the linker, or an object with the cookies names and values
  * @param {string} settings.gaCookiesPrefix - prefix for the Google Analytics cookies
  * @param {string} settings.conversionLinkerCookiesPrefix - prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies.
- * @returns {string[]} - an array containing the linker value for each cookie. Example: ['_ga_THYNGSTER*XXXXXXXXXXXXXXX', '_gcl_aw*AAAAAAAAAAAA', '_gcl_dc*BBBBBBBBBBB', '_gcl_gb*CCCCCCCCCCCC', '_gcl_gf*DDDDDDDDDDD', '_gcl_ha*EEEEEEEEEEEE', '_fplc*MTExMTExMTExMTExMTExMTExMTEx', "*_gcl_au*NTYwNjM5MjY2LjE3MDIwNDc1OTk."", "FPAU*NTYwNjM5MjY2LjE3MDIwNDc1OTk.""]
+ * @returns {string[]} - an array containing the linker value for each cookie. Example: ['_gcl_au*NTYwNjM5MjY2LjE3MDIwNDc1OTk.', 'FPAU*NTYwNjM5MjY2LjE3MDIwNDc1OTk.', '_ga*2MDM4NDg1MS4xNjYxODIxMjQy', _ga_THYNGSTER*XXXXXXXXXXXXXXX', '_gcl_aw*AAAAAAAAAAAA', '_gcl_dc*BBBBBBBBBBB', '_gcl_gb*CCCCCCCCCCCC', '_gcl_gf*DDDDDDDDDDD', '_gcl_ha*EEEEEEEEEEEE', '_fplc*MTExMTExMTExMTExMTExMTExMTEx']
  */
 export function generateLinkerValuesFromCookies({
     cookiesNamesList,

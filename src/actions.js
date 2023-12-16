@@ -76,13 +76,10 @@ export function decorateWithLinker({
                 entity,
                 useFragment
             );
-        }
-        if ("FORM" === entity.tagName) {
+        } else if ("FORM" === entity.tagName) {
             return decorateFormTagWithLinker(linkerQueryParameterName, linkerParameter, entity);
         }
-    }
-
-    if ("string" === typeof entity) {
+    } else if ("string" === typeof entity) {
         return decorateURLWithLinker(
             linkerQueryParameterName,
             linkerParameter,
