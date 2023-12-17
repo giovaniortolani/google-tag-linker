@@ -53,6 +53,7 @@ The fingerprinting is done using the following values:
 The usage for this fingerprinting is not identifying the user, but making the current link only work on the current user's browser and making it valid only for the current minute (since many users may share the same browser specs).
 
 The Linker Parameter will look like this:
+
     1*dm649n*_gcl_au*NTYwNjM5MjY2LjE3MDIwNDc1OTk.*FPAU*NTYwNjM5MjY2LjE3MDIwNDc1OTk.*_ga*MTM2MDM4NDg1MS4xNjYxODIxMjQy*_ga_THYNGSTER*XXXXXXXXXXXXXXX*_gcl_aw*AAAAAAAAAAAA*_gcl_dc*BBBBBBBBBBB*_gcl_gb*CCCCCCCCCCCC*_gcl_gf*DDDDDDDDDDD*_gcl_ha*EEEEEEEEEEEE*_fplc*MTExMTExMTExMTExMTExMTExMTEx
 
 Which follows the following definition:
