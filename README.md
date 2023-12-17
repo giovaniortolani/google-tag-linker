@@ -14,7 +14,7 @@
     + [Loading bundle files of `dist` folder via CDN](#loading-bundle-files-of-dist-folder-via-cdn)
     + [Self-hosting one of the bundle files of `dist` folder](#self-hosting-one-of-the-bundle-files-of-dist-folder)
   * [`get` method](#get-method)
-    + [`get` method code example](get-method-code-example)
+    + [`get` method code example](#get-method-code-example)
   * [`read` method](#read-method)
     + [`read` method code example](#read-method-code-example)
   * [`decorate` method](#decorate-method)
