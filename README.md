@@ -3,7 +3,7 @@
 ## Table of contents
 
 - [Original project](#original-project)
-- [Google Tag Linker Brigde (and any other analytics/marketing tools)](#google-tag-linker-brigde-and-any-other-analyticsmarketing-tools)
+- [Description](#description)
 - [How does Google Tag cross-domain work](#how-does-google-tag-cross-domain-work)
 - [Notes](#notes)
 - [To-Do](#to-do)
@@ -11,14 +11,14 @@
 - [How to use](#how-to-use)
   * [Installation](#installation)
     + [Using `import`](#using-import)
-    + [Loading a bundle files of `dist` folder via CDN](#loading-a-bundle-files-of-dist-folder-via-cdn)
+    + [Loading bundle files of `dist` folder via CDN](#loading-bundle-files-of-dist-folder-via-cdn)
     + [Self-hosting one of the bundle files of `dist` folder](#self-hosting-one-of-the-bundle-files-of-dist-folder)
   * [`get` method](#get-method)
-    + [Example](#example)
+    + [`get` method code example](get-method-code-example)
   * [`read` method](#read-method)
-    + [Example](#example-1)
+    + [`read` method code example](#read-method-code-example)
   * [`decorate` method](#decorate-method)
-    + [Example](#example-2)
+    + [`decorate` method code example](#decorate-method-code-example)
 - [Authors](#authors)
 
 ## Original project
@@ -31,13 +31,13 @@ You can find the original version [here](https://github.com/analytics-debugger/g
 Hola! Olá! This is a **JavaScript** library that provided the needed functionality for creating a `linkerParam` for Google Analytics 4 (**_`Google Tag`_**, **_`gtag`_**). I
 It also works for any other analytics/marketing tools of your choice, such as: Amplitude, Meta, Google Ads etc.
 
-At the time of publishing this library, Google doesn't offer any "documented" way of generating this value, making really hard to work with custom implementations, for example when needing to deal with iFrames or forms/links generated dynamically.
+At the time of publishing this library, Google doesn't offer any "documented" way of generating this value, making really hard to work with custom implementations, for example when dealing with iFrames or forms/links generated dynamically.
 
 The library is provided in the `AMD`, `UMD`, `IIFE`, and `ESM` formats, all of them available in the `dist` folder.
 
 ## How does Google Tag cross-domain work
 
-Google Tag cross-domain works pretty similarly to how previous Google Analytics worked. It's basically based on 2 different parts.
+Google Tag cross-domain works similarly to how previous Google Analytics worked. It's basically based on 2 different parts.
 
 1. A fingerprint (Browser/Time)
 2. The list of cookies to be passed to the new domain
@@ -53,7 +53,6 @@ The fingerprinting is done using the following values:
 The usage for this fingerprinting is not identifying the user, but making the current link only work on the current user's browser and making it valid only for the current minute (since many users may share the same browser specs).
 
 The Linker Parameter will look like this:
-
     1*dm649n*_gcl_au*NTYwNjM5MjY2LjE3MDIwNDc1OTk.*FPAU*NTYwNjM5MjY2LjE3MDIwNDc1OTk.*_ga*MTM2MDM4NDg1MS4xNjYxODIxMjQy*_ga_THYNGSTER*XXXXXXXXXXXXXXX*_gcl_aw*AAAAAAAAAAAA*_gcl_dc*BBBBBBBBBBB*_gcl_gb*CCCCCCCCCCCC*_gcl_gf*DDDDDDDDDDD*_gcl_ha*EEEEEEEEEEEE*_fplc*MTExMTExMTExMTExMTExMTExMTEx
 
 Which follows the following definition:
@@ -106,6 +105,8 @@ $ npm run build
 
 There are 3 options to run the script.
 
+---
+
 #### Using `import`
 
 ```js
@@ -113,7 +114,9 @@ import googleTagLinker from '@giovaniortolanibarbosa/google-tag-linker';
 const linkerParam = googleTagLinker("get");
 ```
 
-#### Loading a bundle files of `dist` folder via CDN
+---
+
+#### Loading bundle files of `dist` folder via CDN
 
 Choose your preferred version inside the `dist` folder.
 
@@ -124,23 +127,17 @@ Choose your preferred version inside the `dist` folder.
 </script>
 ```
 
+---
+
 #### Self-hosting one of the bundle files of `dist` folder
 
-Keep in mind that **you will not receive updates**. This is a viable approach if you use GTM.
-If installing via GTM, choose the `googleTagLinker.iife.min.js` version.
+This is a viable approach if you use **Google Tag Manager (GTM)**. If installing via GTM, choose the `googleTagLinker.iife.min.js` version.
 
-```html
-<!--
-Inside a Custom HTML tag in GTM, add your preferred minified version
+Keep in mind that **you will not receive updates**.
 
-Ensure that it fires before your product analytics or marketing analytics tool that will use the information appended in the query string (cross-domain).
-To do that, add this tag as a setup tag of your tool.
--->
+Check the **option 3** mentioned in [this article](https://www.linkedin.com/pulse/mastering-cross-domain-utilities-empowering-analytics-giovani/) for more information about the installation.
 
-<script>
-var googleTagLinker=function(){"use strict";var e=/^(?:(?:https?|mailto|ftp):|[^:/?#]*(?:[/?#]|$))/i;function r(e,r){return[e,window.btoa(r).replace(/=/g,".")].join("*")}function i(e){return window.atob(e.replace(/\./g,"="))}function n(e,r,i,n){function o(r){var i=(r=function(e,r){if(e=function(e){return new RegExp("(.*?)(^|&)"+e+"=([^&]*)&?(.*)")}(e).exec(r)){var i=e[2],n=e[4];r=e[1],n&&(r=r+i+n)}return r}(e,r)).charAt(r.length-1);return r&&"&"!==i&&(r+="&"),r+u}n=!!n;var t=/([^?#]+)(\?[^#]*)?(#.*)?/.exec(i);if(!t)return"";var a=t[1],s=t[2]||"",c=t[3]||"",u=e+"="+r;return n?c="#"+o(c.substring(1)):s="?"+o(s.substring(1)),""+a+s+c}function o(){for(var e,r=arguments.length>0&&void 0!==arguments[0]?arguments[0]:void 0,i=[window.navigator.userAgent,(new Date).getTimezoneOffset(),window.navigator.userLanguage||window.navigator.language,Math.floor((new Date).getTime()/60/1e3)-0,r?r.join("*"):""].join("*"),n=[],o=0;o<256;o++){e=o;for(var t=0;t<8;t++)e=1&e?3988292384^e>>>1:e>>>1;n[o]=e}for(var a=-1,s=0;s<i.length;s++)a=a>>>8^n[255&(a^i.charCodeAt(s))];return((-1^a)>>>0).toString(36)}function t(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},i=function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},i=e.cookiesNamesList,n=e.gaCookiesPrefix,o=e.conversionLinkerCookiesPrefix,t=new RegExp("^"+n+"_ga"),a=/G[A-Z]1\.[0-9]\.(.+)/,s=[],c=void 0;return Array.isArray(i)?i.forEach((function(e){var i=function(e){for(var r=("; "+document.cookie).split("; "),i=r.length-1;i>=0;i--){var n=r[i].split("=");if(e instanceof RegExp?e.test(n[0]):e===n[0])return[n[0],n[1]]}return[]}(e);e=i[0];var n=i[1];if(n){if(t.test(e))n=n.match(a)[1];else{if("FPLC"===e)return void(c=n);e!==o+"_au"&&"FPAU"!==e||(n=n.split(".").slice(2).join("."))}s.push(r(e,n))}})):Object.keys(i).forEach((function(e){var n=i[e];"FPLC"!==e?s.push(r(e,n)):c=n})),c&&s.push(r("_fplc",c)),s}({cookiesNamesList:e.cookiesNamesList,gaCookiesPrefix:e.gaCookiesPrefix,conversionLinkerCookiesPrefix:e.conversionLinkerCookiesPrefix});return["1",o(i),i.join("*")].join("*")}var a=function(){var r=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"get",a=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};if("undefined"==typeof window||void 0===window.document)throw"This should be only run on a browser";var s={gaCookiesPrefix:a.gaCookiesPrefix||"",conversionLinkerCookiesPrefix:a.conversionLinkerCookiesPrefix||"_gcl",linkerQueryParameterName:a.linkerQueryParameterName||"_gl",checkFingerPrint:!!a.checkFingerPrint||!1,useFragment:!!a.useFragment||!1};switch(a.cookiesNamesList?s.cookiesNamesList=a.cookiesNamesList:(s.cookiesNamesList=[s.gaCookiesPrefix+"_ga",new RegExp("^"+s.gaCookiesPrefix+"_ga_[A-Z,0-9]"),"FPLC","FPAU"],["_aw","_dc","_gb","_gf","_ha","_au"].forEach((function(e){s.cookiesNamesList.push(s.conversionLinkerCookiesPrefix+e)}))),r){case"get":return t({cookiesNamesList:s.cookiesNamesList,gaCookiesPrefix:s.gaCookiesPrefix,conversionLinkerCookiesPrefix:s.conversionLinkerCookiesPrefix});case"read":return function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};return function(){var e,r,n,t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},a=t.linkerQueryParameterName,s=t.checkFingerPrint,c=(e=a,r=window.location.href,null===(n=new RegExp("[?&]"+e+"=([^&#]*)","i").exec(r))?null:decodeURIComponent(n[1]));if(c){for(var u=c.split("*").slice(2),f={},g=[],k=0;k<u.length;k+=2){var v=u[k],m=u[k+1];g.push(v+"*"+m),f[v]=i(m)}if(s){var l=o(g);if(c.split("*")[1]!==l)return}return f}}({linkerQueryParameterName:e.linkerQueryParameterName,checkFingerPrint:e.checkFingerPrint})}({linkerQueryParameterName:s.linkerQueryParameterName,checkFingerPrint:s.checkFingerPrint});case"decorate":return function(){var r=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},i=r.linkerQueryParameterName,o=r.cookiesNamesList,a=r.gaCookiesPrefix,s=r.conversionLinkerCookiesPrefix,c=r.entity,u=r.useFragment,f=[],g=t({cookiesNamesList:o,gaCookiesPrefix:a,conversionLinkerCookiesPrefix:s});return Array.isArray(c)||c instanceof NodeList||(c=[c]),c.forEach((function(r){var o;r.tagName?"A"===r.tagName?o=function(r,i,o,t){if(o&&o.href){var a=n(r,i,o.href,t);if(e.test(a))return o.href=a,o}}(i,g,r,u):"FORM"===r.tagName&&(o=function(r,i,o){if(o&&o.action){var t=(o.method||"").toLowerCase();if("get"===t){for(var a=o.childNodes||[],s=!1,c=0;c<a.length;c++){var u=a[c];if(u.name===r){u.setAttribute("value",i),s=!0;break}}if(!s){var f=document.createElement("input");f.setAttribute("type","hidden"),f.setAttribute("name",r),f.setAttribute("value",i),o.appendChild(f)}return o}if("post"===t){var g=n(r,i,o.action);if(e.test(g))return o.action=g,o}}}(i,g,r)):"string"==typeof r&&(o=n(i,g,r,u)),o&&f.push(o)})),f.length?f:void 0}({linkerQueryParameterName:s.linkerQueryParameterName,cookiesNamesList:s.cookiesNamesList,gaCookiesPrefix:s.gaCookiesPrefix,conversionLinkerCookiesPrefix:s.conversionLinkerCookiesPrefix,entity:a.entity,useFragment:s.useFragment})}};return a.prototype={},a.answer=42,a}();
-</script>
-```
+---
 
 ### `get` method
 
@@ -192,6 +189,8 @@ const linkerParam = googleTagLinker("get", {
 });
 ```
 
+---
+
 ### `read` method
 
 The `read` method reads the linker parameter from the URL and returns an object with its values parsed and decoded.
@@ -225,6 +224,8 @@ const linkerParamParsedAndDecoded = googleTagLinker("read", {
     checkFingerPrint: true
 });
 ```
+
+---
 
 ### `decorate` method
 
