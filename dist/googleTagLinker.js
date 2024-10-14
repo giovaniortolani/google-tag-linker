@@ -402,7 +402,7 @@
         new RegExp("^" + defaultSettings.gaCookiesPrefix + "_ga_[A-Z0-9]+$"),
         // First Party Linker Cookie maps to sGTM
         "FPLC",
-        // First Party Advertiser User ID maps to sGTM (same as _gcl_au)
+        // First Party Advertiser User ID maps to sGTM (same purpose as _gcl_au)
         "FPAU"];
 
         // Google Ads (gclid, gclsrc maps to _aw, _dc, _gf, _ha cookies)

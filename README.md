@@ -69,6 +69,7 @@ This tool will read and pass the following cookies by default:
 | `({{prefix}}\|_gcl)`_aw | Google Analytics Ads / Campaign Manager Cookies - gclid, dclid, gclsrc URL parameters |
 | `({{prefix}}\|_gcl)`_dc | Google Analytics Ads / Campaign Manager Cookies - gclid, dclid, gclsrc URL parameters |
 | `({{prefix}}\|_gcl)`_gb | Google Analytics Ads / Campaign Manager Cookies - gclid, dclid, gclsrc, wbraid URL parameters |
+| `({{prefix}}\|_gcl)`_ag | Google Analytics Ads / Campaign Manager Cookies - gclid, dclid, gclsrc, gbraid URL parameters |
 | `({{prefix}}\|_gcl)`_gf | Google Analytics Ads / Campaign Manager Cookies - gclid, dclid, gclsrc URL parameters  |
 | `({{prefix}}\|_gcl)`_ha | Google Analytics Ads / Campaign Manager Cookies - gclid, dclid, gclsrc URL parameters |
 | `({{prefix}}\|_gcl)`_au | Google Analytics Ads / Campaign Manager Cookies - [Advertiser User ID](https://support.google.com/google-ads/answer/9148089?hl=en) - value that is generated randomly and is used by Googe Ads tags to join with ad click data |
@@ -151,7 +152,7 @@ const linkerParam = googleTagLinker("get", settings);
 |---|---|---|---|
 | settings.gaCookiesPrefix | Prefix to use when looking for `_ga` cookies. | string \| undefined | `''` (empty string - i.e. no prefix) |
 | settings.conversionLinkerCookiesPrefix | Prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies. | string \| undefined | `'_gcl'` |
-| settings.cookiesNamesList | List of cookies names to include in the linker parameter or an object containing the names and values of the cookies | (string\|RegExp)[] \| object \| undefined | `["_ga", /^_ga_[A-Z0-9]+$/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", "_gcl_gf", "_gcl_ha", "_gcl_au", "FPAU"]` |
+| settings.cookiesNamesList | List of cookies names to include in the linker parameter or an object containing the names and values of the cookies | (string\|RegExp)[] \| object \| undefined | `["_ga", /^_ga_[A-Z0-9]+$/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", "_gcl_ag", "_gcl_gf", "_gcl_ha", "_gcl_au", "FPAU"]` |
 
 #### `get` method code example
 
@@ -240,7 +241,7 @@ const entityDecoratedWithLinkerValue = googleTagLinker("decorate", settings);
 | settings.<br>linkerQueryParameterName | The query parameter name to use as the linker parameter. | string \| undefined | `'_gl'` |
 | settings.gaCookiesPrefix | Prefix to use when looking for `_ga` cookies. | string \| undefined | `''` (empty string - i.e. no prefix) |
 | settings.<br>conversionLinkerCookiesPrefix | Prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies. | string \| undefined | `'_gcl'` |
-| settings.cookiesNamesList | List of cookies names to include in the linker parameter or an object containing the names and values of the cookies. | (string\|RegExp)[] \| object \| undefined | `["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha", "_gcl_au", "FPAU"]` |
+| settings.cookiesNamesList | List of cookies names to include in the linker parameter or an object containing the names and values of the cookies. | (string\|RegExp)[] \| object \| undefined | `["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", "_gcl_ag", "_gcl_gf", "_gcl_ha", "_gcl_au", "FPAU"]` |
 | settings.entity | The entity (`<a>`, `<form>` or an URL) to be decorated or an array with the entities (`<a>`, `<form>` or an URL) or a NodeList with the entities (`<a>` or `<form>`). | (HTMLAnchorElement\|HTMLFormElement\|string)[] \| NodeList<HTMLAnchorElement\|HTMLFormElement> \| HTMLAnchorElement \| HTMLFormElement \| string | N/A |
 | settings.useFragment | A flag indicating whether to use the fragment part of the URL or not. | boolean \| undefined | `false` |
 

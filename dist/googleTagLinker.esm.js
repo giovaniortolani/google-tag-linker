@@ -438,7 +438,7 @@ const googleTagLinker = function (action = "get", settings = {}) {
             // First Party Linker Cookie maps to sGTM
             "FPLC",
 
-            // First Party Advertiser User ID maps to sGTM (same as _gcl_au)
+            // First Party Advertiser User ID maps to sGTM (same purpose as _gcl_au)
             "FPAU"
         ];
 
