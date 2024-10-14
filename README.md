@@ -151,7 +151,7 @@ const linkerParam = googleTagLinker("get", settings);
 |---|---|---|---|
 | settings.gaCookiesPrefix | Prefix to use when looking for `_ga` cookies. | string \| undefined | `''` (empty string - i.e. no prefix) |
 | settings.conversionLinkerCookiesPrefix | Prefix to use when looking for Conversion Linker (Google Ads, Campaign Manager) cookies. | string \| undefined | `'_gcl'` |
-| settings.cookiesNamesList | List of cookies names to include in the linker parameter or an object containing the names and values of the cookies | (string\|RegExp)[] \| object \| undefined | `["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", "_gcl_gf", "_gcl_ha", "_gcl_au", "FPAU"]` |
+| settings.cookiesNamesList | List of cookies names to include in the linker parameter or an object containing the names and values of the cookies | (string\|RegExp)[] \| object \| undefined | `["_ga", /^_ga_[A-Z0-9]+$/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", "_gcl_gf", "_gcl_ha", "_gcl_au", "FPAU"]` |
 
 #### `get` method code example
 

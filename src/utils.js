@@ -96,7 +96,7 @@ export function generateLinkerValuesFromCookies({
     conversionLinkerCookiesPrefix
 } = {}) {
     const gaCookiesRegex = new RegExp("^" + gaCookiesPrefix + "_ga");
-    const gaCookiesExtractValuesRegex = /G[A-Z]1\.[0-9]\.(.+)/;
+    const gaCookiesExtractValuesRegex = /G[A-Z]1\.[0-9]+\.(.+)/;
     const cookiesValuesFormattedForLinker = [];
     let _FPLC = undefined;
 

@@ -96,7 +96,7 @@ function generateLinkerValuesFromCookies({
     conversionLinkerCookiesPrefix
 } = {}) {
     const gaCookiesRegex = new RegExp("^" + gaCookiesPrefix + "_ga");
-    const gaCookiesExtractValuesRegex = /G[A-Z]1\.[0-9]\.(.+)/;
+    const gaCookiesExtractValuesRegex = /G[A-Z]1\.[0-9]+\.(.+)/;
     const cookiesValuesFormattedForLinker = [];
     let _FPLC = undefined;
 
@@ -408,7 +408,7 @@ function decorateWithLinker({
  * @param {boolean|undefined} settings.checkFingerPrint - enable or disable checking the fingerprint of the linker parameter. Default: false.
  * @param {(HTMLAnchorElement|HTMLFormElement|string)[]|NodeList<HTMLAnchorElement|HTMLFormElement>|HTMLAnchorElement|HTMLFormElement|string} settings.entity - the entity (<a>, <form> or an URL) to be decorated or an array with the entities (<a>, <form> or an URL) or a NodeList with the entities (<a> or <form>).
  * @param {boolean|undefined} settings.useFragment - whether to place the linker parameter in the fragment part of the URL or in the query string. Default: false.
- * @param {(string|RegExp)[]|object|undefined} settings.cookiesNamesList - list of cookies names to include in the linker parameter or an object containing the cookies names and values. Default: ["_ga", /^_ga_[A-Z,0-9]/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha", "_gcl_au", "FPAU"].
+ * @param {(string|RegExp)[]|object|undefined} settings.cookiesNamesList - list of cookies names to include in the linker parameter or an object containing the cookies names and values. Default: ["_ga", /^_ga_[A-Z0-9]+$/, "FPLC", "_gcl_aw", "_gcl_dc", "_gcl_gb", _"gcl_gf", "_gcl_ha", "_gcl_au", "FPAU"].
  * @returns {HTMLAnchorElement|HTMLFormElement|string|undefined} Returns the linker parameter, the values read from the linker parameter, the entities decorated with the linker parameter or undefined.
  */
 const googleTagLinker = function (action = "get", settings = {}) {
@@ -433,7 +433,7 @@ const googleTagLinker = function (action = "get", settings = {}) {
             defaultSettings.gaCookiesPrefix + "_ga",
 
             // Google Analytics 4 Session Cookie (e.g. Data Stream ID is G-ABC123, the cookie will be <prefix>_ga_ABC123)
-            new RegExp("^" + defaultSettings.gaCookiesPrefix + "_ga_[A-Z,0-9]"),
+            new RegExp("^" + defaultSettings.gaCookiesPrefix + "_ga_[A-Z0-9]+$"),
 
             // First Party Linker Cookie maps to sGTM
             "FPLC",
@@ -445,8 +445,9 @@ const googleTagLinker = function (action = "get", settings = {}) {
         // Google Ads (gclid, gclsrc maps to _aw, _dc, _gf, _ha cookies)
         // Campaign Manager (dclid, gclsrc maps to _aw, _dc, _gf, _ha cookies)
         // wbraid (wbraid maps to _gb cookie)
+        // gbraid (grabid maps to _ag cookie)
         // Advertising ID - value that is generated randomly and is used by Googe Ads tags to join with ad click data (_au cookie)
-        ["_aw", "_dc", "_gb", "_gf", "_ha", "_au"].forEach((name) => {
+        ["_aw", "_dc", "_gb", "_ag", "_gf", "_ha", "_au"].forEach((name) => {
             defaultSettings.cookiesNamesList.push(
                 defaultSettings.conversionLinkerCookiesPrefix + name
             );
