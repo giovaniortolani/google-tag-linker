@@ -1,4 +1,4 @@
-# Google Tag Linker Brigde (and for any other analytics/marketing tools)
+# Google Tag Linker Brigde (and for any other analytics/marketing tools) Cross-Domain
 
 ## Table of contents
 
@@ -28,8 +28,12 @@ You can find the original version [here](https://github.com/analytics-debugger/g
 
 ## Description
 
-Hola! Olá! This is a **JavaScript** library that provided the needed functionality for creating a `linkerParam` for Google Analytics 4 (**_`Google Tag`_**, **_`gtag`_**). I
+Hola! Olá! This is a **JavaScript** library that provided the needed functionality for creating a `linkerParam` for Google Analytics 4 (**_`Google Tag`_**, **_`gtag`_**). This parameter is part of the cross-domain process.
 It also works for any other analytics/marketing tools of your choice, such as: Amplitude, Meta, Google Ads etc.
+
+Therefore, you can use it to control the cross-domain process better, allowing you to perform different personalizations.
+
+It works flawlessly in conjunction with the native GA4 tags.
 
 At the time of publishing this library, Google doesn't offer any "documented" way of generating this value, making really hard to work with custom implementations, for example when dealing with iFrames or forms/links generated dynamically.
 
