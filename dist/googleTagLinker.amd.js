@@ -108,7 +108,7 @@ define((function () { 'use strict';
         gaCookiesPrefix = _ref2.gaCookiesPrefix,
         conversionLinkerCookiesPrefix = _ref2.conversionLinkerCookiesPrefix;
       var gaCookiesRegex = new RegExp("^" + gaCookiesPrefix + "_ga");
-      var gaCookiesExtractValuesRegex = /G[A-Z]1\.[0-9]+\.(.+)/;
+      var gaCookiesExtractValuesRegex = /G[A-Z][1-9]+\.[0-9]+\.(.+)/;
       var cookiesValuesFormattedForLinker = [];
       var _FPLC = undefined;
 
